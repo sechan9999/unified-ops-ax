@@ -89,25 +89,28 @@ class KafkaStreamConsumer:
 
 
 class StreamIngestManager:
-    """Multi-Region Streaming Manager routing Pub/Sub, Eventarc, and Kafka to AsyncAgentEngine."""
+    """Multi-Region Telemetry Stream Manager for Pub/Sub, Eventarc, and Kafka."""
 
-    def __init__(self, agent_engine=None):
-        self.agent_engine = agent_engine
+    def __init__(self, engine_ref=None, agent_engine=None):
         self.pubsub_subscriber = GCPPubSubSubscriber()
         self.kafka_consumer = KafkaStreamConsumer()
+        self.agent_engine = agent_engine or engine_ref
+        self.engine_ref = self.agent_engine
+        self.processed_messages_count = 0
         self.is_active = False
         self.regions = ["us-central1", "europe-west1", "asia-east1"]
         self.total_stream_messages = 0
 
     def set_engine(self, engine):
         self.agent_engine = engine
+        self.engine_ref = engine
 
     async def process_stream_message(self, message: StreamMessage) -> Dict[str, Any]:
         """Parses stream message and dispatches task/remediation to AsyncAgentEngine."""
         self.total_stream_messages += 1
         payload = message.payload
 
-        # Check if message is an anomaly alert payload
+        eng = self.agent_engine or self.engine_ref
         if "anomaly_type" in payload:
             anomaly_str = payload.get("anomaly_type")
             metric_val = float(payload.get("metric_value", 0.0))
@@ -117,8 +120,8 @@ class StreamIngestManager:
             except ValueError:
                 anomaly_type = anomaly_str
 
-            if self.agent_engine:
-                result = await self.agent_engine.trigger_anomaly_remediation(anomaly_type, metric_val)
+            if eng:
+                result = await eng.trigger_anomaly_remediation(anomaly_type, metric_val)
                 return {
                     "status": "remediation_triggered",
                     "source": message.source_type,
@@ -127,6 +130,22 @@ class StreamIngestManager:
                 }
 
         # Routine telemetry log event -> enqueue task
+        log_count = int(payload.get("log_count", 100))
+        if eng:
+            def dummy_stream_job():
+                time.sleep(0.005)
+                return f"Stream log batch ({log_count} events) processed from {message.source_type}:{message.region}"
+
+            task = await eng.submit_task(
+                dummy_stream_job,
+                name=f"stream_{message.source_type}_{message.region}"
+            )
+            return {
+                "status": "enqueued",
+                "task_id": task.task_id,
+                "source": message.source_type,
+                "region": message.region
+            }
         if self.agent_engine:
             async def log_indexer_task():
                 await asyncio.sleep(0.01)

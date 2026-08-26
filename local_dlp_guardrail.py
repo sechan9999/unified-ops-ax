@@ -26,8 +26,9 @@ class LocalDLPGuardrail:
 
     PATTERNS = {
         "SSN": r"\b\d{3}-\d{2}-\d{4}\b",
+        "KR_RRN": r"\b\d{6}-[1-4]\d{6}\b",
         "CREDIT_CARD": r"\b(?:\d[ -]*?){13,16}\b",
-        "API_KEY": r"\b(?:sk-[a-zA-Z0-9]{20,}|AIzaSy[a-zA-Z0-9_-]{33}|ghp_[a-zA-Z0-9]{36})\b",
+        "API_KEY": r"\b(?:sk-[a-zA-Z0-9_-]{10,}|AIzaSy[a-zA-Z0-9_-]{30,}|ghp_[a-zA-Z0-9]{30,})\b",
         "EMAIL": r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b",
         "PHONE": r"\b(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b"
     }
