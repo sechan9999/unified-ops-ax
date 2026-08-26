@@ -1,0 +1,77 @@
+{
+  "version": "2.0",
+  "lastUpdated": "2026-05-18T00:00:00.000Z",
+  "activeFeatures": [],
+  "primaryFeature": null,
+  "features": {
+    "splunk-auto-remediation": {
+      "phase": "archived",
+      "matchRate": 100,
+      "iterationCount": 0,
+      "startedAt": "2026-05-15T14:20:00.000Z",
+      "archivedAt": "2026-05-15T17:05:00.000Z",
+      "archivedTo": "docs/archive/2026-05/splunk-auto-remediation/"
+    },
+    "splunk-soar-brigde": {
+      "phase": "archived",
+      "matchRate": 100,
+      "iterationCount": 0,
+      "startedAt": "2026-05-15T13:50:00.000Z",
+      "archivedAt": "2026-05-15T17:08:00.000Z",
+      "archivedTo": "docs/archive/2026-05/splunk-soar-brigde/"
+    },
+    "splunk-mcp-tool": {
+      "phase": "archived",
+      "matchRate": 100,
+      "iterationCount": 0,
+      "startedAt": "2026-05-15T12:40:00.000Z",
+      "archivedAt": "2026-05-15T17:10:00.000Z",
+      "archivedTo": "docs/archive/2026-05/splunk-mcp-tool/"
+    },
+    "splunk-hec-emitter": {
+      "phase": "archived",
+      "matchRate": 96,
+      "iterationCount": 0,
+      "startedAt": "2026-05-15T12:00:00.000Z",
+      "archivedAt": "2026-05-15T17:12:00.000Z",
+      "archivedTo": "docs/archive/2026-05/splunk-hec-emitter/"
+    },
+    "MCPagents-splunk": {
+      "phase": "archived",
+      "matchRate": 100,
+      "iterationCount": 1,
+      "startedAt": "2026-05-15T12:23:25.755Z",
+      "archivedAt": "2026-05-18T00:00:00.000Z",
+      "archivedTo": "docs/archive/2026-05/MCPagents-splunk/"
+    }
+  },
+  "pipeline": {
+    "currentPhase": 1,
+    "level": "Enterprise",
+    "phaseHistory": [
+      {
+        "phase": "plan",
+        "feature": "splunk-hec-emitter",
+        "at": "2026-05-15T12:00:00.000Z"
+      }
+    ]
+  },
+  "session": {
+    "startedAt": "2026-05-15T12:00:00.000Z",
+    "onboardingCompleted": true,
+    "lastActivity": "2026-05-15T12:00:00.000Z"
+  },
+  "history": [
+    {
+      "action": "plan",
+      "feature": "splunk-hec-emitter",
+      "at": "2026-05-15T12:00:00.000Z"
+    }
+  ],
+  "sessionCount": 7,
+  "lastSession": {
+    "startedAt": "2026-05-18T21:01:41.951Z",
+    "platform": "claude",
+    "level": "Enterprise"
+  }
+}

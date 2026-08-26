@@ -1,0 +1,103 @@
+# Hybrid Recommender System
+
+Combines **user behavior** (implicit feedback), **product data** (category/price features),
+and **contextual signals** (device, time of day, weekend) into a tunable hybrid ranker,
+with an offline evaluation harness and a FastAPI serving layer.
+
+## Quickstart
+
+```bash
+# offline evaluation (trains all models, tunes hybrid, prints comparison table)
+python -m recommender.run_eval
+
+# unit tests
+python -m pytest tests/test_recommender.py -q
+
+# serving API
+uvicorn recommender.service:app --port 8100
+curl -X POST localhost:8100/recommend -H "Content-Type: application/json" \
+  -d '{"user_id": 42, "device": "mobile", "hour_bucket": "evening", "k": 5}'
+```
+
+Dependencies: `numpy`, `pandas`, `fastapi` (no sklearn required).
+
+## Architecture
+
+```
+events (view/click/cart/purchase + context)
+        │
+        ├── PopularityRecommender   time-decayed popularity (baseline + cold-start)
+        ├── ItemItemCFRecommender   BM25-weighted item-item cosine CF, shrinkage, top-N pruning
+        ├── ContentBasedRecommender item features × interaction-weighted user profile
+        └── ContextAffinity         P(category | device, hour, weekend) lift vs global
+                │
+        HybridContextualRecommender
+        score = w_cf·CF + w_ct·Content + w_pop·Pop + w_ctx·Context
+        (rank-percentile fusion; weights tuned by fast simplex grid
+         search on validation NDCG@10 over precomputed components)
+                │
+        FastAPI /recommend  → top-K + per-item reason breakdown
+```
+
+## Offline results (temporal holdout, K=10)
+
+| model | recall@10 | ndcg@10 | coverage@10 |
+|---|---|---|---|
+| popularity | 0.103 | 0.058 | 0.30 |
+| item_cf (BM25) | 0.194 | **0.120** | 0.92 |
+| content | 0.149 | 0.078 | 0.72 |
+| sim_blend (α=0.9) | **0.196** | 0.119 | **0.93** |
+| hybrid_contextual | 0.195 | 0.117 | 0.77 |
+
+Hybrid ≈ **2× NDCG vs popularity baseline** with 2.6× catalog coverage.
+Tuned weights on this data: cf 0.2, content 0.6, popularity 0.2
+(varies by seed/scale — the tuner adapts automatically).
+
+### v2 improvements (2026-07)
+
+- **BM25 reweighting** of the interaction matrix before item-item cosine:
+  IDF-boosts rare items, length-normalizes heavy users. CF NDCG@10
+  0.075 → **0.120** (+60%), recall 0.142 → **0.194** (+37%).
+- **Rank-percentile fusion** replaces minmax score blending — CF/content
+  scores are heavy-tailed, so minmax squashed most signal near 0 (the old
+  tuner drove CF weight to 0 because of it).
+- **~6× faster weight tuning**: component scores precomputed once per
+  user; each grid point is a weighted sum, enabling a finer simplex grid.
+
+### v3 experiment: similarity-level blending (2026-07)
+
+`SimBlendRecommender` blends at the *similarity matrix* instead of the
+score level: `sim = α·sim_cf + (1−α)·sim_content`, then `score = sim @
+user_vec`. Content neighbors backfill items with thin interaction data
+*before* scoring — a cold-item fix score-level fusion can't express.
+Validation picked α=0.9; result: best recall@10 (0.196) and coverage
+(0.93) of all models, NDCG on par with pure BM25 CF. Score-level hybrid
+keeps the edge only when context/popularity signals matter.
+
+## Evaluation protocol
+
+- **Temporal split**: days 0–70 train / 70–80 validation (weight tuning) / 80–90 test — no leakage.
+- Ground truth: click-or-stronger events on items *not* seen in train.
+- Metrics: Recall@K, NDCG@K, catalog coverage@K.
+
+## Key design decisions
+
+- **Cold start**: users with no history get `0.6·popularity + 0.4·context affinity`.
+- **Explainability**: `/recommend` returns per-item `reason` (cf/content/popularity/context
+  contributions) — useful for debugging, trust, and merchandising review.
+- **Context as lift, not count**: `P(cat|ctx) / P(cat)` so context only reorders where it
+  genuinely deviates from global behavior.
+- Demo fits on synthetic data at startup; the generator injects real structure
+  (segment→category preference, context→category boosts) so models have learnable signal.
+
+## Production path (engineering handoff)
+
+1. **Batch training**: replace startup-fit with a daily job that trains and writes artifacts
+   (similarity matrix, profiles, affinity table); service loads artifacts only.
+2. **Feedback loop**: log impressions + clicks with request context → retraining data;
+   watch for position bias (log rank, use inverse-propensity weighting later).
+3. **Experimentation**: A/B or interleaving; guardrails = CTR, coverage, latency p99 < 50 ms.
+4. **Scale**: swap dense matrices for sparse (`scipy.sparse`), ANN retrieval (FAISS) at
+   >100K items; candidate-generation + ranking split.
+5. **Model roadmap**: ALS/BPR embeddings → two-tower retrieval + GBDT ranker with context
+   features → sequence models (SASRec) for session awareness.

@@ -1,0 +1,20 @@
+.vercel
+# Splunk
+*.pyc
+__pycache__/
+.env
+keys.json
+enterprise_audit.log
+splunk_app/lookups/*.csv.bak
+
+# Python Virtual Environments & Caches
+venv/
+.venv/
+.pytest_cache/
+
+# Video Binaries
+*.mp4
+
+# Dev tooling
+.bkit/
+.claude/
