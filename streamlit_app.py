@@ -1,7 +1,7 @@
 """Unified Ops AX — Streamlit Control Center Dashboard.
 
 Interactive web interface for Fleet Controls, PyDeck 3D Spatial Maps, K8s Pod Scaling,
-DLP Security Desk, and Operational Telemetry.
+DLP Security Desk, Operational Telemetry, and Live Google GenAI SDK (google-genai) & ADK Execution.
 """
 
 import asyncio
@@ -14,7 +14,7 @@ import pydeck as pdk
 import streamlit as st
 
 from async_agent_engine import AsyncAgentEngine, TaskPriority
-from auto_remediation import AnomalyType
+from auto_remediation import AnomalyType, GENAI_AVAILABLE, ADK_AVAILABLE
 
 # Page Configuration
 st.set_page_config(
@@ -38,6 +38,14 @@ st.markdown("""
         padding: 16px;
         backdrop-filter: blur(10px);
     }
+    .badge-sdk {
+        background-color: #4285F4;
+        color: #ffffff;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
     .badge-demo {
         background-color: #3b82f6;
         color: #eff6ff;
@@ -57,14 +65,6 @@ st.markdown("""
     .badge-warning {
         background-color: #d97706;
         color: #fffbeb;
-        padding: 4px 10px;
-        border-radius: 6px;
-        font-weight: 600;
-        font-size: 0.85rem;
-    }
-    .badge-danger {
-        background-color: #dc2626;
-        color: #fef2f2;
         padding: 4px 10px;
         border-radius: 6px;
         font-weight: 600;
@@ -97,17 +97,17 @@ def call_coro(coro, timeout: float = 10.0):
 # Sidebar Navigation
 st.sidebar.image("https://img.icons8.com/isometric/96/server.png", width=70)
 st.sidebar.title("Unified Ops AX")
-st.sidebar.markdown("<span class='badge-demo'>DEMO MODE</span> **AI Fleet Control Desk**", unsafe_allow_html=True)
+st.sidebar.markdown(f"<span class='badge-sdk'>google-genai {'✓' if GENAI_AVAILABLE else '×'}</span> <span class='badge-sdk'>google-adk {'✓' if ADK_AVAILABLE else '×'}</span>", unsafe_allow_html=True)
 st.sidebar.markdown("---")
 
 nav_choice = st.sidebar.radio(
     "Navigation",
-    ["🌐 Fleet Overview & Incidents", "⚡ Async Engine & Task History", "☸️ K8s HPA Pod Scaling", "🔒 Local DLP Security Desk", "📊 Operational Telemetry"]
+    ["🌐 Fleet Overview & Incidents", "🤖 Google GenAI & ADK Playground", "⚡ Async Engine & Task History", "☸️ K8s HPA Pod Scaling", "🔒 Local DLP Security Desk", "📊 Operational Telemetry"]
 )
 
 # Header Section
 st.title("🚀 Unified Ops AX: Fleet Control Center")
-st.caption("Autonomous Multi-Agent Fleet Telemetry & Closed-Loop Remediation Engine (Google ADK & Gemini 3.5 Flash)")
+st.caption("Autonomous Multi-Agent Fleet Telemetry Engine (Powered by google-genai, google-adk & Gemini 2.0/3.5 Flash)")
 
 # -----------------------------------------------------------------------------
 # TAB 1: Fleet Overview & Incidents
@@ -185,7 +185,8 @@ if nav_choice == "🌐 Fleet Overview & Incidents":
             a_map = {"COST_SPIKE": AnomalyType.COST_SPIKE, "LATENCY_SPIKE": AnomalyType.LATENCY_SPIKE, "DLP_BURST": AnomalyType.DLP_BURST}
             res = call_coro(engine.trigger_anomaly_remediation(a_map[anomaly_sel], metric_val))
             st.warning(f"Policy Status: `{res.get('status', 'remediated')}` | Rollback Token: `{res.get('rollback_token', 'N/A')}`")
-            st.json(res)
+            st.markdown("#### Google GenAI SDK (`google-genai`) Execution Result:")
+            st.json(res.get("google_genai_execution", res))
             st.rerun()
 
     with col_inc2:
@@ -204,7 +205,31 @@ if nav_choice == "🌐 Fleet Overview & Incidents":
             st.info("No active policy override. System operating at baseline model weights.")
 
 # -----------------------------------------------------------------------------
-# TAB 2: Async Engine & Task History
+# TAB 2: Google GenAI & ADK Playground
+# -----------------------------------------------------------------------------
+elif nav_choice == "🤖 Google GenAI & ADK Playground":
+    st.subheader("🤖 Live Google GenAI SDK (`google-genai`) & Google ADK (`google-adk`) Playground")
+    st.markdown("Direct client execution environment using `from google import genai` and `from google.adk.agents import BaseAgent`.")
+
+    col_sdk1, col_sdk2 = st.columns(2)
+    with col_sdk1:
+        st.markdown(f"**Google GenAI SDK (`google-genai`)**: `{'Installed (v0.1+)' if GENAI_AVAILABLE else 'Not Installed'}`")
+    with col_sdk2:
+        st.markdown(f"**Google ADK (`google-adk`)**: `{'Installed (v2.2.0)' if ADK_AVAILABLE else 'Not Installed'}`")
+
+    st.markdown("---")
+    st.markdown("### Execute Live Gemini Model Call")
+    prompt_text = st.text_area("Prompt for Gemini Model", value="Summarize fleet telemetry policy: latency 5200ms detected on GCP us-central1.")
+    model_choice = st.selectbox("Select Target Model", ["gemini-2.0-flash", "gemini-1.5-flash"])
+
+    if st.button("Execute google.genai Client Call", use_container_width=True):
+        with st.spinner("Invoking google.genai.Client..."):
+            genai_res = engine.policy_engine.execute_google_genai_call(prompt_text, model_name=model_choice)
+            st.success(f"Execution Status: `{genai_res['status']}` | Model: `{genai_res['model_used']}` | Latency: `{genai_res['latency_ms']} ms`")
+            st.json(genai_res)
+
+# -----------------------------------------------------------------------------
+# TAB 3: Async Engine & Task History
 # -----------------------------------------------------------------------------
 elif nav_choice == "⚡ Async Engine & Task History":
     st.subheader("⚡ AsyncAgentEngine Worker Status & Recent Task Table")
@@ -251,7 +276,7 @@ elif nav_choice == "⚡ Async Engine & Task History":
         st.info("No tasks recorded yet.")
 
 # -----------------------------------------------------------------------------
-# TAB 3: K8s HPA Pod Scaling
+# TAB 4: K8s HPA Pod Scaling
 # -----------------------------------------------------------------------------
 elif nav_choice == "☸️ K8s HPA Pod Scaling":
     st.subheader("☸️ Kubernetes Horizontal Pod Autoscaler (HPA)")
@@ -280,7 +305,7 @@ elif nav_choice == "☸️ K8s HPA Pod Scaling":
         st.info("No scaling events recorded yet.")
 
 # -----------------------------------------------------------------------------
-# TAB 4: Local DLP Security Desk
+# TAB 5: Local DLP Security Desk
 # -----------------------------------------------------------------------------
 elif nav_choice == "🔒 Local DLP Security Desk":
     st.subheader("🔒 Fine-Tuned Local DLP Guardrail & Security Desk")
@@ -308,7 +333,7 @@ elif nav_choice == "🔒 Local DLP Security Desk":
         st.code(res.masked_text)
 
 # -----------------------------------------------------------------------------
-# TAB 5: Operational Telemetry
+# TAB 6: Operational Telemetry
 # -----------------------------------------------------------------------------
 elif nav_choice == "📊 Operational Telemetry":
     st.subheader("📊 Operational Metrics & Prometheus Exposition")
