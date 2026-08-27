@@ -23,7 +23,7 @@ We architected **Unified Ops AX** using modern agentic and operational framework
 ### 🛠️ Languages, Tools & Frameworks
 - **Primary Language**: Python 3.11
 - **Agent Frameworks**: **Google Agent Development Kit (ADK)**, **Google GenAI SDK**
-- **AI Models**: **Gemini 3.5 Flash** (via GCP Vertex AI), **Gemini 2.0 Flash**, OpenAI GPT-4o
+- **AI Models**: **Gemini 3.6 Flash** (via GCP Vertex AI), **Gemini 3.5 Flash**, OpenAI GPT-4o
 - **Google Cloud Services**: **Vertex AI**, **Google Cloud Pub/Sub**, **GCP Eventarc**, **Google Cloud Run**
 - **Orchestration & Infrastructure**: **Kubernetes (K8s) HPA Pod Autoscaler**, `asyncio.PriorityQueue` Multi-Worker Engine
 - **Telemetry & Streams**: **Splunk HEC (HTTP Event Collector)**, **Apache Kafka**, Prometheus / Grafana `/metrics`

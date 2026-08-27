@@ -2,7 +2,7 @@
 
 Provides atomic policy state overrides, priority precedence (DLP > Latency > Cost),
 replay protection, webhook idempotency deduplication, structured audit logging,
-and live Google GenAI SDK (google-genai) & Google ADK (google-adk) execution.
+and live Google GenAI SDK (google-genai) & Google ADK (google-adk) execution using Gemini 3.6 Flash & 3.5 Flash.
 """
 
 import hashlib
@@ -76,7 +76,7 @@ class PolicyOverrideState:
 
 
 class DurablePolicyEngine:
-    """Stateful, atomic policy engine managing overrides, precedence, idempotency, and Google GenAI SDK calls."""
+    """Stateful, atomic policy engine managing overrides, precedence, idempotency, and Gemini 3.6 Flash SDK calls."""
 
     PRIORITY_MAP = {
         AnomalyType.DLP_BURST: PolicyPriority.CRITICAL,
@@ -103,7 +103,7 @@ class DurablePolicyEngine:
                 trigger_threshold=5.0,
                 priority=PolicyPriority.NORMAL,
                 actions=["switch_to_cheaper_model", "enable_caching", "notify_admin"],
-                fallback_model="gemini-2.0-flash",
+                fallback_model="gemini-3.6-flash",
                 cost_weight_boost=0.3,
                 cooldown_sec=300
             ),
@@ -112,7 +112,7 @@ class DurablePolicyEngine:
                 trigger_threshold=5000.0,
                 priority=PolicyPriority.HIGH,
                 actions=["scale_k8s_pods", "switch_to_faster_model", "notify_ops"],
-                fallback_model="gemini-2.0-flash",
+                fallback_model="gemini-3.6-flash",
                 cooldown_sec=300
             ),
             AnomalyType.DLP_BURST: RemediationPolicy(
@@ -124,8 +124,8 @@ class DurablePolicyEngine:
             )
         }
 
-    def execute_google_genai_call(self, prompt: str, model_name: str = "gemini-2.0-flash") -> Dict[str, Any]:
-        """Executes a real Google GenAI SDK (google-genai) client call if API key present, or returns graceful fallback."""
+    def execute_google_genai_call(self, prompt: str, model_name: str = "gemini-3.6-flash") -> Dict[str, Any]:
+        """Executes a real Google GenAI SDK (google-genai) client call using Gemini 3.6 Flash / 3.5 Flash."""
         self.genai_call_count += 1
         t0 = time.time()
         api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
@@ -160,9 +160,9 @@ class DurablePolicyEngine:
             return {
                 "genai_sdk": "google-genai",
                 "adk_sdk": "google-adk",
-                "status": "SIMULATED_DEMO_MODE (Set GEMINI_API_KEY for live Vertex/Gemini endpoint)",
+                "status": f"SIMULATED_DEMO_MODE (Set GEMINI_API_KEY for live {model_name} Vertex endpoint)",
                 "model_used": model_name,
-                "remediation_summary": f"Cost-spike policy triggered. Router weights adjusted for {model_name}.",
+                "remediation_summary": f"Cost-spike policy triggered. Model routed to {model_name}.",
                 "latency_ms": latency,
                 "api_key_configured": False
             }
@@ -186,7 +186,7 @@ class DurablePolicyEngine:
         timestamp: Optional[float] = None,
         owner: str = "auto_remediator"
     ) -> Dict[str, Any]:
-        """Executes atomic remediation with precedence ordering, audit logging, and Google GenAI SDK integration."""
+        """Executes atomic remediation with precedence ordering, audit logging, and Gemini 3.6 Flash SDK integration."""
         t_now = timestamp or time.time()
         a_id = alert_id or f"alert_{int(t_now * 1000)}_{anomaly_type.value}"
 
@@ -219,8 +219,8 @@ class DurablePolicyEngine:
                     "active_policy": self.active_override.active_policy.anomaly_type.value
                 }
 
-        # 3. Execute Google GenAI SDK Call
-        target_model = policy.fallback_model or "gemini-2.0-flash"
+        # 3. Execute Google GenAI SDK Call with Gemini 3.6 Flash
+        target_model = policy.fallback_model or "gemini-3.6-flash"
         genai_res = self.execute_google_genai_call(
             prompt=f"Analyze operational metric surge {metric_value} for {anomaly_type.value} and return action plan.",
             model_name=target_model
@@ -303,6 +303,7 @@ class DurablePolicyEngine:
             "google_genai_installed": GENAI_AVAILABLE,
             "google_adk_installed": ADK_AVAILABLE,
             "genai_calls_executed": self.genai_call_count,
+            "primary_model": "gemini-3.6-flash",
             "active_override": {
                 "policy": self.active_override.active_policy.anomaly_type.value,
                 "owner": self.active_override.owner,

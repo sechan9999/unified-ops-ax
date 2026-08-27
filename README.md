@@ -1,7 +1,7 @@
 # 🚀 Unified Ops AX — Autonomous AI Fleet Telemetry & Self-Healing Remediation Engine
 
 > **[All Things Agentic Hackathon (Devpost)](https://allthingsagentichackathon.devpost.com/)** — Category: **Fortified Enterprise Fleet**  
-> Built with: **Google Agent Development Kit (ADK)** + **Google GenAI SDK** + **Gemini 3.5 Flash** + **Google Cloud Pub/Sub**  
+> Built with: **Google Agent Development Kit (ADK)** + **Google GenAI SDK** + **Gemini 3.6 Flash** + **Gemini 3.5 Flash** + **Google Cloud Pub/Sub**  
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://unified-ops.streamlit.app/)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-sechan9999%2Funified--ops--ax-blue?logo=github)](https://github.com/sechan9999/unified-ops-ax)

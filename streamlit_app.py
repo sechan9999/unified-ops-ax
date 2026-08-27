@@ -107,7 +107,8 @@ nav_choice = st.sidebar.radio(
 
 # Header Section
 st.title("🚀 Unified Ops AX: Fleet Control Center")
-st.caption("Autonomous Multi-Agent Fleet Telemetry Engine (Powered by google-genai, google-adk & Gemini 2.0/3.5 Flash)")
+st.caption("Autonomous Multi-Agent Fleet Telemetry Engine (Powered by google-genai, google-adk & Gemini 3.6 Flash / 3.5 Flash)")
+
 
 # -----------------------------------------------------------------------------
 # TAB 1: Fleet Overview & Incidents
@@ -220,7 +221,7 @@ elif nav_choice == "🤖 Google GenAI & ADK Playground":
     st.markdown("---")
     st.markdown("### Execute Live Gemini Model Call")
     prompt_text = st.text_area("Prompt for Gemini Model", value="Summarize fleet telemetry policy: latency 5200ms detected on GCP us-central1.")
-    model_choice = st.selectbox("Select Target Model", ["gemini-2.0-flash", "gemini-1.5-flash"])
+    model_choice = st.selectbox("Select Target Model", ["gemini-3.6-flash", "gemini-3.5-flash"])
 
     if st.button("Execute google.genai Client Call", use_container_width=True):
         with st.spinner("Invoking google.genai.Client..."):
