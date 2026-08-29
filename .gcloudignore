@@ -1,0 +1,17 @@
+.gcloudignore
+.git
+.gitignore
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+*.db
+*.sqlite
+*.sqlite3
+*.mp4
+*.zip
+*.docx
+*.pptx
+.env
