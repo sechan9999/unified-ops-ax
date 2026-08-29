@@ -81,12 +81,15 @@ st.markdown(
                 Backend Service: <strong>Google Cloud Run</strong> | Agent Platform: <strong>Vertex AI (Gemini 3.5 Flash)</strong> | Event Bus: <strong>Pub/Sub</strong> | Audit: <strong>Firestore</strong>
             </span>
         </div>
-        <div style="display: flex; gap: 0.5rem;">
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
             <a href="https://console.cloud.google.com/run/detail/us-central1/unified-ops-ax/observability/metrics?project=agentichackathon-506620" target="_blank" style="background: #10b981; color: #ffffff; text-decoration: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; font-size: 0.85rem;">
                 🤖 Agent Console
             </a>
             <a href="https://unified-ops-ax-652787573242.us-central1.run.app/docs" target="_blank" style="background: #2563eb; color: #ffffff; text-decoration: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; font-size: 0.85rem;">
                 ⚡ FastAPI Swagger UI (/docs)
+            </a>
+            <a href="https://github.com/sechan9999/unified-ops-ax" target="_blank" style="background: #334155; color: #ffffff; text-decoration: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; font-size: 0.85rem; border: 1px solid #475569;">
+                🐙 GitHub Repo
             </a>
         </div>
     </div>
