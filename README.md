@@ -125,7 +125,7 @@ Governance          Audit Log, Adoption KPIs, Data Ownership (app/governance) + 
 ## 🛠️ How We Built It
 
 - **Google Cloud & Vertex AI Stack:**
-  - **Gemini 3.6 Flash via Vertex AI**, pinned explicitly to avoid non-deterministic model drift.
+  - **Gemini 3.5 Flash via Vertex AI**, pinned explicitly to avoid non-deterministic model drift.
   - **Google Agent Developer Kit (ADK):** Configured using the Agent-to-Agent (A2A) template exposing agent capability cards.
   - **Cloud Infrastructure:** Cloud Run (scale-to-zero), Cloud SQL Postgres, Pub/Sub with OIDC push subscriptions, Secret Manager, Model Armor guardrails, Cloud Trace, and Memory Bank Agent Engine.
 - **Offline First Engineering Principle:**

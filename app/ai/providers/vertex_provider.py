@@ -1,4 +1,4 @@
-"""Google Cloud Vertex AI Provider for Gemini Models (Gemini 1.5 Flash / 2.5 Flash / Pro).
+"""Google Cloud Vertex AI Provider for Gemini Models (Gemini 3.5 Flash / Pro).
 Integrates with Google Cloud Vertex AI infrastructure."""
 from __future__ import annotations
 
