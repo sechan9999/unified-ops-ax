@@ -3,6 +3,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.agents.evolve import EvolveAgent
 from app.agents.followup import FollowUpAgent
 from app.agents.insights import InsightsAgent
 from app.agents.knowledge import KnowledgeCaptureAgent
@@ -15,6 +16,12 @@ router = APIRouter(prefix="/agents", tags=["ai-agents"])
 @router.post("/insights")
 def insights(session: Session = Depends(get_session)):
     return InsightsAgent(session).run()
+
+
+@router.post("/evolve")
+def evolve_audit(session: Session = Depends(get_session)):
+    """Run Evolve Agent diagnostic evaluation & strategic improvement audit."""
+    return EvolveAgent(session).run()
 
 
 @router.post("/triage/{ticket_id}")

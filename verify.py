@@ -160,6 +160,11 @@ def main() -> int:
               and pub_res["status"] in ("published", "queued_local")
               and fst_res["status"] in ("saved", "saved_local"))
 
+        # 16. Evolve Agent System Audit & Evolution Directives
+        ev_res = c.post("/agents/evolve").json()
+        check("Evolve Agent (진화/진단 에이전트 4대 개선 지침 발급)",
+              ev_res["status"] == "completed" and ev_res["improvements_suggested"] == 4)
+
     # summary
     print("\n" + "=" * 56)
     print("  Unified Ops AX — 오프라인 검증")
