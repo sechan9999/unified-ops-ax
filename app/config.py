@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     cloud_run_service_url: str = "https://unified-ops-ax-652787573242.us-central1.run.app"
     agent_platform_url: str = "https://console.cloud.google.com/agent-platform/overview?project=agentichackathon-506620"
     vertex_ai_location: str = "us-central1"
-    vertex_ai_model: str = "gemini-3.6-flash"
+    vertex_ai_model: str = "gemini-3.5-flash"
     firestore_collection: str = "activity_logs"
     pubsub_topic: str = "projects/agentichackathon-506620/topics/activity-events"
     gcs_bucket_name: str = "agentichackathon-506620-rag-docs"

@@ -69,7 +69,7 @@ class EvolveAgent:
             {
                 "category": "🤖 Agent Intelligence & Multi-Turn Reasoning",
                 "title": "Dynamic Escalation & Automated Prior Auth Re-Appeals",
-                "description": "Expand Governed Agent fleet to auto-generate customized insurance re-appeal letters using Vertex AI Gemini 3.6 Flash when denial confidence is high.",
+                "description": "Expand Governed Agent fleet to auto-generate customized insurance re-appeal letters using Vertex AI Gemini 3.5 Flash when denial confidence is high.",
                 "priority": "P1"
             },
             {
@@ -137,4 +137,4 @@ class EvolveAgent:
 
     @staticmethod
     def _fallback_narrative(audit_res: dict) -> str:
-        return f"System Audit Complete: All {audit_res['endpoints_tested']} endpoints fully operational (DB Latency: {audit_res['db_latency_ms']}ms). 4 strategic evolution directives identified for Redis caching, Gemini 3.6 Flash auto-appeals, WebSocket streaming, and Cloud KMS key rotation."
+        return f"System Audit Complete: All {audit_res['endpoints_tested']} endpoints fully operational (DB Latency: {audit_res['db_latency_ms']}ms). 4 strategic evolution directives identified for Redis caching, Gemini 3.5 Flash auto-appeals, WebSocket streaming, and Cloud KMS key rotation."

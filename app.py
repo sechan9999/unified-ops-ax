@@ -78,7 +78,7 @@ st.markdown(
             <span style="font-size: 1.1rem; font-weight: 700; color: #ffffff;">☁️ Unified Ops AX — Google Cloud Agent Platform Backend (agentichackathon-506620)</span>
             <br>
             <span style="font-size: 0.85rem; color: #94a3b8;">
-                Backend Service: <strong>Google Cloud Run</strong> | Agent Platform: <strong>Vertex AI (Gemini 3.6 Flash)</strong> | Event Bus: <strong>Pub/Sub</strong> | Audit: <strong>Firestore</strong>
+                Backend Service: <strong>Google Cloud Run</strong> | Agent Platform: <strong>Vertex AI (Gemini 3.5 Flash)</strong> | Event Bus: <strong>Pub/Sub</strong> | Audit: <strong>Firestore</strong>
             </span>
         </div>
         <div style="display: flex; gap: 0.5rem;">
@@ -356,7 +356,7 @@ with tab_evolve:
                 </p>
             </div>
             <div style="background: #161F30; padding: 1rem; border-radius: 8px; border-left: 4px solid #3B82F6; margin-bottom: 1rem;">
-                <span style="font-weight: 700; color: #3B82F6;">[P1] 🤖 Vertex AI Gemini 3.6 Flash Multi-Turn Reasoning</span>
+                <span style="font-weight: 700; color: #3B82F6;">[P1] 🤖 Vertex AI Gemini 3.5 Flash Multi-Turn Reasoning</span>
                 <p style="font-size: 0.88rem; color: #94a3b8; margin-top: 0.4rem;">
                     Expand Evolve Agent to automatically generate structured architectural patch recommendations and multi-turn function call loops when anomalies are detected.
                 </p>
