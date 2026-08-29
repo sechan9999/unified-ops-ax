@@ -7,15 +7,17 @@
 [![Live Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://unified-ops.streamlit.app/)
 [![GCP Cloud Run Endpoint](https://img.shields.io/badge/Google%20Cloud%20Run-Active%20%2Erun%2Eapp-4285F4?logo=googlecloud)](https://unified-ops-ax-652787573242.us-central1.run.app/ops/preflight)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-sechan9999%2Funified--ops--ax-blue?logo=github)](https://github.com/sechan9999/unified-ops-ax)
-[![Build & Verify Status](https://img.shields.io/badge/Tests-103%20Passed%20%7C%2016%2F16%20Suite-brightgreen.svg)]()
+[![Build & Verify Status](https://img.shields.io/badge/Tests-103%20Passed%20%7C%2017%2F17%20Suite-brightgreen.svg)]()
 [![Model](https://img.shields.io/badge/LLM-Vertex%20AI%20%7C%20Gemini%203.5%20Flash-34A853.svg)]()
 
 ---
 
 ## 🌐 Live Web App & Google Cloud Backend
 
-👉 **Live Control Center**: **[https://unified-ops.streamlit.app/](https://unified-ops.streamlit.app/)** *(Alternative: [https://splunkax.streamlit.app/](https://splunkax.streamlit.app/))*  
-👉 **Google Cloud Run Backend Endpoint**: **[https://unified-ops-ax-652787573242.us-central1.run.app/ops/preflight](https://unified-ops-ax-652787573242.us-central1.run.app/ops/preflight)**  
+👉 **Live Control Center**: **[https://unified-ops.streamlit.app/](https://unified-ops.streamlit.app/)**  
+👉 **Google Cloud Run Backend**: **[https://unified-ops-ax-652787573242.us-central1.run.app/](https://unified-ops-ax-652787573242.us-central1.run.app/)**  
+👉 **FastAPI Interactive Docs**: **[https://unified-ops-ax-652787573242.us-central1.run.app/docs](https://unified-ops-ax-652787573242.us-central1.run.app/docs)**  
+👉 **Cloud Run Observability Dashboard**: **[Google Cloud Console — Cloud Run Metrics](https://console.cloud.google.com/run/detail/us-central1/unified-ops-ax/observability/metrics?project=agentichackathon-506620)**  
 👉 **GitHub Repository**: **[https://github.com/sechan9999/unified-ops-ax](https://github.com/sechan9999/unified-ops-ax)**  
 
 ---
@@ -24,7 +26,7 @@
 
 Per official hackathon rules (*"Mandatory for all categories: at least one Google Cloud infrastructure service such as Cloud Run, Cloud SQL, Firestore, GKE, Pub/Sub"*), **Unified Ops AX** leverages **6 Google Cloud Infrastructure & AI services**:
 
-1. **Google Cloud Run (Serverless Container Host):** Live auto-scaling HTTP backend microservice at [`https://unified-ops-ax-652787573242.us-central1.run.app`](https://unified-ops-ax-652787573242.us-central1.run.app/ops/preflight) running FastAPI, Uvicorn, 4 Governed Agents, and MCP endpoints.
+1. **Google Cloud Run (Serverless Container Host):** Live auto-scaling HTTP backend microservice at [`https://unified-ops-ax-652787573242.us-central1.run.app`](https://unified-ops-ax-652787573242.us-central1.run.app/ops/preflight) running FastAPI, Uvicorn, 5 Governed Agents, and MCP endpoints.
 2. **Vertex AI & Gemini Models:** Pinned `gemini-3.5-flash` via Vertex AI Generative AI SDK for agent reasoning ([app/ai/providers/vertex_provider.py](file:///c:/Users/secha/.gemini/antigravity-ide/scratch/unified-ops-ax/unified-ops-ax/app/ai/providers/vertex_provider.py)) and `text-embedding-004` for vector search.
 3. **GCP Pub/Sub (Activity Event Bus):** Transactional outbox event bus publishing activity streams to topic `projects/agentichackathon-506620/topics/activity-events` ([app/gcp/pubsub.py](file:///c:/Users/secha/.gemini/antigravity-ide/scratch/unified-ops-ax/unified-ops-ax/app/gcp/pubsub.py)).
 4. **GCP Firestore (NoSQL Document Store):** Audit logging & activity state persistence under collection `activity_logs` ([app/gcp/firestore.py](file:///c:/Users/secha/.gemini/antigravity-ide/scratch/unified-ops-ax/unified-ops-ax/app/gcp/firestore.py)).
@@ -36,8 +38,11 @@ Per official hackathon rules (*"Mandatory for all categories: at least one Googl
 ![Unified Ops AX Streamlit Control Center](assets/streamlit_dashboard.png)
 *Unified Ops AX Control Center displaying real-time 3D spatial flow map, background worker metrics, and K8s pod scaling controls.*
 
-![Google Cloud Infrastructure & Cloud Run Backend](assets/gcp_cloud_run_dashboard.png)
-*Google Cloud Run Serverless Backend & Multi-Region Agent Platform Telemetry Control Center.*
+![Real Google Cloud Console Cloud Run Dashboard](assets/real_gcp_cloud_run_console.png)
+*Authentic Google Cloud Console Cloud Run Dashboard for service `unified-ops-ax` on project `AgenticHackathon` showing real-time request volume, 2xx/4xx metrics, and latency breakdown.*
+
+![Cloud Run Revisions & Governed Agents](assets/gcp_console_2_revisions.png)
+*Google Cloud Run Revisions tab displaying active revision `unified-ops-ax-00015-8pd` serving 100% of production traffic.*
 
 ---
 
@@ -53,12 +58,13 @@ So we inverted the pitch. **This project is not interesting because the agents a
 
 ## 🛡️ What It Does
 
-**Gemini Ops Fleet** is a fleet of four governed back-office agents running on top of **Unified Ops AX** — a modular monolith architecture that processes a single `Activity` event stream instead of relying on prompt-box interactions:
+**Gemini Ops Fleet** is a fleet of five governed back-office agents running on top of **Unified Ops AX** — a modular monolith architecture that processes a single `Activity` event stream instead of relying on prompt-box interactions:
 
 1. **AS Triage Agent (`as.opened`):** Classifies incoming support tickets, determines severity, and auto-assigns to team members based on workload.
 2. **Knowledge Agent (`as.resolved`):** Converts resolved support tickets into structured knowledge documents (drafts) and indexes them into RAG.
 3. **Follow-up Agent (`delivery.done`):** Drafts customer follow-up messages — and **can only draft**.
 4. **Reconcile Agent (`order.placed`):** Checks the order book against accounting ledgers in a read-only, non-mutating mode.
+5. **Evolve Agent (`evolve.audit`):** Audits application links, endpoint latencies, and generates continuous self-healing evolution directives.
 
 ```
        Business Activity Event Stream (Pub/Sub / Outbox)
