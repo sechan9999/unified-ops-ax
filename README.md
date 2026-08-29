@@ -36,8 +36,8 @@ Per official hackathon rules (*"Mandatory for all categories: at least one Googl
 ![Unified Ops AX Streamlit Control Center](assets/streamlit_dashboard.png)
 *Unified Ops AX Control Center displaying real-time 3D spatial flow map, background worker metrics, and K8s pod scaling controls.*
 
-![Splunk & Telemetry Governance Dashboard](assets/splunk_dashboard.png)
-*Splunk & Multi-Agent Telemetry Governance Dashboard displaying real-time ingest streams, audit logs, and system performance metrics.*
+![Google Cloud Infrastructure & Cloud Run Backend](assets/gcp_cloud_run_dashboard.png)
+*Google Cloud Run Serverless Backend & Multi-Region Agent Platform Telemetry Control Center.*
 
 ---
 
