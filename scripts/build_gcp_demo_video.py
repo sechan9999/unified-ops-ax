@@ -1,49 +1,62 @@
-"""Build MP4 Demo Video with Authentic Proof of Google Cloud Run Execution using FFmpeg."""
+"""
+Build MP4 Demo Video with 6 Authentic Google Cloud Console Screenshots and Voiceover Narration Audio.
+"""
 import os
 import subprocess
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ASSETS_DIR = os.path.join(REPO_ROOT, "assets")
-OUTPUT_VIDEO_ROOT = os.path.join(REPO_ROOT, "unified_ops_ax_demo_video.mp4")
+OUTPUT_VIDEO = os.path.join(REPO_ROOT, "unified_ops_ax_demo_video.mp4")
+AUDIO_FILE = os.path.join(ASSETS_DIR, "narration.wav")
 
-# Real Google Cloud Console & Telemetry Screenshots
-img1 = os.path.join(ASSETS_DIR, "real_gcp_cloud_run_console.png")
-img2 = os.path.join(ASSETS_DIR, "gcp_cloud_run_dashboard.png")
-img3 = os.path.join(ASSETS_DIR, "streamlit_dashboard.png")
+img1 = os.path.join(ASSETS_DIR, "gcp_console_1_observability.png")
+img2 = os.path.join(ASSETS_DIR, "gcp_console_2_revisions.png")
+img3 = os.path.join(ASSETS_DIR, "gcp_console_3_source.png")
+img4 = os.path.join(ASSETS_DIR, "gcp_console_4_yaml.png")
+img5 = os.path.join(ASSETS_DIR, "gcp_console_5_streamlit_map.png")
+img6 = os.path.join(ASSETS_DIR, "streamlit_dashboard.png")
 
-print(f"Checking images:\n 1 (Real Cloud Run Console): {os.path.exists(img1)}\n 2 (Multi-Region Fleet Map): {os.path.exists(img2)}\n 3 (3D PyDeck Control Desk): {os.path.exists(img3)}")
-
-# Build a smooth 15-second MP4 video stitching 3 authentic proof screenshots (5s each)
-# Slide 1: Real Google Cloud Console Cloud Run Dashboard (service unified-ops-ax on us-central1)
-# Slide 2: Real Multi-Region Fleet Map with Agent Platform & Cloud Run Endpoint badges
-# Slide 3: Real Streamlit Fleet Control Desk (PyDeck 3D map, metrics, and pod scaling controls)
 p1 = img1.replace("\\", "/")
 p2 = img2.replace("\\", "/")
 p3 = img3.replace("\\", "/")
+p4 = img4.replace("\\", "/")
+p5 = img5.replace("\\", "/")
+p6 = img6.replace("\\", "/")
+p_audio = AUDIO_FILE.replace("\\", "/")
+
+print(f"Checking assets:\n Audio: {os.path.exists(AUDIO_FILE)}\n 1 (Observability): {os.path.exists(img1)}\n 2 (Revisions): {os.path.exists(img2)}\n 3 (Source): {os.path.exists(img3)}\n 4 (YAML): {os.path.exists(img4)}\n 5 (Streamlit Map): {os.path.exists(img5)}\n 6 (3D PyDeck): {os.path.exists(img6)}")
+
 concat_script = os.path.join(ASSETS_DIR, "video_inputs.txt")
 with open(concat_script, "w", encoding="utf-8") as f:
-    f.write(f"file '{p1}'\nduration 5\n")
-    f.write(f"file '{p2}'\nduration 5\n")
-    f.write(f"file '{p3}'\nduration 5\n")
-    f.write(f"file '{p3}'\n")
+    f.write(f"file '{p1}'\nduration 8\n")
+    f.write(f"file '{p2}'\nduration 8\n")
+    f.write(f"file '{p3}'\nduration 8\n")
+    f.write(f"file '{p4}'\nduration 8\n")
+    f.write(f"file '{p5}'\nduration 8\n")
+    f.write(f"file '{p6}'\nduration 7\n")
+    f.write(f"file '{p6}'\n")
 
 cmd = [
     "ffmpeg", "-y",
     "-f", "concat",
     "-safe", "0",
     "-i", concat_script,
+    "-i", p_audio,
     "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,format=yuv420p",
     "-c:v", "libx264",
+    "-c:a", "aac",
+    "-b:a", "192k",
+    "-shortest",
     "-r", "30",
     "-preset", "fast",
-    OUTPUT_VIDEO_ROOT
+    OUTPUT_VIDEO
 ]
 
-print("Running ffmpeg command:", " ".join(cmd))
+print("Running ffmpeg build command...")
 res = subprocess.run(cmd, capture_output=True, text=True)
 print("FFmpeg returncode:", res.returncode)
 if res.returncode == 0:
-    print(f"Successfully generated authentic demo video at: {OUTPUT_VIDEO_ROOT}")
-    print(f"Video size: {os.path.getsize(OUTPUT_VIDEO_ROOT)} bytes")
+    print(f"Successfully generated narrated demo video at: {OUTPUT_VIDEO}")
+    print(f"Video size: {os.path.getsize(OUTPUT_VIDEO)} bytes")
 else:
     print("FFmpeg stderr:", res.stderr)
