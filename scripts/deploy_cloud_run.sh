@@ -5,14 +5,16 @@ set -euo pipefail
 PROJECT_ID="${GCP_PROJECT_ID:-agentichackathon-506620}"
 REGION="${GCP_REGION:-us-central1}"
 SERVICE_NAME="unified-ops-ax"
-IMAGE="gcr.io/${PROJECT_ID}/${SERVICE_NAME}:latest"
 
-echo "=== Building container image with Google Cloud Build ==="
-gcloud builds submit --tag "${IMAGE}" --project "${PROJECT_ID}"
+echo "=== 1. Setting GCP Active Project to ${PROJECT_ID} ==="
+gcloud config set project "${PROJECT_ID}"
 
-echo "=== Deploying container to Google Cloud Run (${REGION}) ==="
+echo "=== 2. Enabling Required GCP APIs ==="
+gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com --project "${PROJECT_ID}"
+
+echo "=== 3. Deploying Source Directly to Google Cloud Run (${REGION}) ==="
 gcloud run deploy "${SERVICE_NAME}" \
-  --image "${IMAGE}" \
+  --source . \
   --platform managed \
   --region "${REGION}" \
   --allow-unauthenticated \
