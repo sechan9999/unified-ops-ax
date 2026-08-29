@@ -42,10 +42,13 @@ from fastapi.responses import FileResponse, HTMLResponse
 @app.get("/", response_class=HTMLResponse)
 @app.get("/dashboard", response_class=HTMLResponse)
 def get_dashboard():
-    dashboard_path = os.path.join(os.path.dirname(__file__), "..", "dashboard.html")
-    if os.path.exists(dashboard_path):
-        return FileResponse(dashboard_path)
-    return HTMLResponse("<h1>Unified Ops AX Backend Ready</h1>")
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    for candidate in ["dashboard.html", "unified_ops_ax_dashboard.html", "web/index.html"]:
+        path = os.path.join(base_dir, candidate)
+        if os.path.exists(path):
+            with open(path, "r", encoding="utf-8") as f:
+                return HTMLResponse(content=f.read())
+    return HTMLResponse("<h1>Unified Ops AX — Google Cloud Run Backend Active</h1><p>Preflight: <a href='/ops/preflight'>/ops/preflight</a> | Health: <a href='/health'>/health</a></p>")
 
 
 @app.get("/health")
