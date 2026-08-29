@@ -393,11 +393,80 @@
 
             <!-- View 2: Async Engine & Workers -->
             <section id="view-async" class="view-section">
-                <div class="section-title">⚡ Async Engine & Workers Queue</div>
-                <div class="section-sub">Transactional Outbox event worker polling loop with idempotent dispatchers.</div>
-                <div class="card">
-                    <div style="font-family: 'Fira Code', monospace; font-size: 0.85rem; color: #34d399;">
-                        [08:15:00] EVENT_WORKER_DRAIN: Outbox queue drained (0 pending events). Status: IDLE
+                <div class="section-title">⚡ AsyncAgentEngine Worker Status & Queue Controls</div>
+                <div class="section-sub">Autonomous Background Multi-Agent Telemetry & Self-Healing Remediation Engine (Google ADK & Gemini 3.5 Flash)</div>
+                
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-title">Engine State</div>
+                        <div class="kpi-value" style="color:#00FFA3;">RUNNING</div>
+                        <div class="kpi-sub">↑ 4 active workers</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">Worker Count</div>
+                        <div class="kpi-value">4 Threads</div>
+                        <div class="kpi-sub">Priority Queue Engine</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">Processed Tasks</div>
+                        <div class="kpi-value" id="processed-tasks-count">1,048 Tasks</div>
+                        <div class="kpi-sub">↑ 31.5 tasks/sec throughput</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem;" class="section-title">Interactive Task Submission & Anomaly Simulation</div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem;">
+                    <!-- Card 1: Batch Job Submission -->
+                    <div class="card">
+                        <h4 style="color:#ffffff; margin-bottom: 0.8rem; font-size: 1.05rem;">Submit Background Batch Job</h4>
+                        <div style="margin-bottom: 1rem;">
+                            <label style="font-size:0.85rem; color:#94a3b8; display:block; margin-bottom:0.4rem;">Log Event Volume per Batch: <span id="batch-volume-val" style="color:#00FFA3; font-weight:700;">500</span></label>
+                            <input type="range" id="batch-volume-slider" min="100" max="2000" step="100" value="500" style="width:100%; accent-color:#00FFA3;" oninput="document.getElementById('batch-volume-val').innerText = this.value">
+                        </div>
+                        <div style="margin-bottom: 1.2rem;">
+                            <label style="font-size:0.85rem; color:#94a3b8; display:block; margin-bottom:0.4rem;">Priority Level</label>
+                            <select id="batch-priority-select" style="width:100%; background:#0F172A; color:#E2E8F0; border:1px solid #1E293B; padding:0.6rem; border-radius:6px;">
+                                <option value="NORMAL">NORMAL (Telemetry Ingest)</option>
+                                <option value="HIGH">HIGH (RAG Vector Indexing)</option>
+                                <option value="CRITICAL">CRITICAL (Security & Alert Overrides)</option>
+                                <option value="LOW">LOW (Daily Summary Digest)</option>
+                            </select>
+                        </div>
+                        <button onclick="enqueueBatchJob()" style="width:100%; background:#10b981; color:#ffffff; font-weight:700; border:none; padding:0.75rem; border-radius:6px; cursor:pointer;">
+                            ⚡ Enqueue Batch Ingest Job
+                        </button>
+                    </div>
+
+                    <!-- Card 2: Anomaly Simulation -->
+                    <div class="card">
+                        <h4 style="color:#ffffff; margin-bottom: 0.8rem; font-size: 1.05rem;">Simulate Splunk Anomaly Alert</h4>
+                        <div style="margin-bottom: 1rem;">
+                            <label style="font-size:0.85rem; color:#94a3b8; display:block; margin-bottom:0.4rem;">Anomaly Type</label>
+                            <select id="anomaly-type-select" style="width:100%; background:#0F172A; color:#E2E8F0; border:1px solid #1E293B; padding:0.6rem; border-radius:6px;">
+                                <option value="COST_SPIKE">COST_SPIKE (Hourly USD > $5.00)</option>
+                                <option value="LATENCY_BURST">LATENCY_BURST (P99 > 5,000ms)</option>
+                                <option value="DLP_VIOLATION">DLP_VIOLATION (PII Exposure Trigger)</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom: 1.2rem;">
+                            <label style="font-size:0.85rem; color:#94a3b8; display:block; margin-bottom:0.4rem;">Metric Threshold Value</label>
+                            <input type="number" id="anomaly-metric-val" value="8.50" step="0.5" style="width:100%; background:#0F172A; color:#E2E8F0; border:1px solid #1E293B; padding:0.6rem; border-radius:6px;">
+                        </div>
+                        <button onclick="triggerAutoRemediation()" style="width:100%; background:#ef4444; color:#ffffff; font-weight:700; border:none; padding:0.75rem; border-radius:6px; cursor:pointer;">
+                            🚨 Trigger Auto-Remediation Policy
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Async Engine Log Output Terminal -->
+                <div class="card" style="margin-top: 1.5rem; background: #090D16; border: 1px solid #1E293B;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+                        <span style="font-weight:700; color:#E2E8F0; font-size:0.9rem;">📟 Live Async Engine Log Console</span>
+                        <span style="font-size:0.75rem; color:#00FFA3;">● STREAM ACTIVE</span>
+                    </div>
+                    <div id="async-log-console" style="font-family: 'Fira Code', monospace; font-size: 0.82rem; color: #34d399; max-height: 180px; overflow-y: auto; line-height: 1.6;">
+                        <div>[08:15:00] EVENT_WORKER_DRAIN: Outbox queue drained (0 pending events). Status: IDLE</div>
                     </div>
                 </div>
             </section>
@@ -539,6 +608,42 @@
             L.polyline(arc1, { color: '#10b981', weight: 3.5, opacity: 0.95 }).addTo(leafletMap);
             L.polyline(arc2, { color: '#3b82f6', weight: 3.5, opacity: 0.95 }).addTo(leafletMap);
             L.polyline(arc3, { color: '#06b6d4', weight: 3.0, opacity: 0.85, dashArray: '6, 8' }).addTo(leafletMap);
+        }
+
+        let totalProcessed = 1048;
+
+        function enqueueBatchJob() {
+            const vol = document.getElementById('batch-volume-slider').value;
+            const prio = document.getElementById('batch-priority-select').value;
+            const consoleDiv = document.getElementById('async-log-console');
+            const time = new Date().toTimeString().split(' ')[0];
+
+            totalProcessed += parseInt(vol);
+            document.getElementById('processed-tasks-count').innerText = totalProcessed.toLocaleString() + ' Tasks';
+
+            const logLine = document.createElement('div');
+            logLine.style.color = '#00FFA3';
+            logLine.innerHTML = `[${time}] TASK_ENQUEUED: Priority=${prio} | Events=${vol} | Processing via 4 Worker Threads... [0.317s]`;
+            consoleDiv.prepend(logLine);
+        }
+
+        function triggerAutoRemediation() {
+            const anomaly = document.getElementById('anomaly-type-select').value;
+            const val = document.getElementById('anomaly-metric-val').value;
+            const consoleDiv = document.getElementById('async-log-console');
+            const time = new Date().toTimeString().split(' ')[0];
+
+            const logLine1 = document.createElement('div');
+            logLine1.style.color = '#FFC107';
+            logLine1.innerHTML = `[${time}] ALERT_TRIGGERED: ${anomaly} detected (Value: ${val}). Initiating Auto-Remediation...`;
+            consoleDiv.prepend(logLine1);
+
+            setTimeout(() => {
+                const logLine2 = document.createElement('div');
+                logLine2.style.color = '#38BDF8';
+                logLine2.innerHTML = `[${time}] POLICY_EXECUTED: Circuit breaker opened. Switched to fallback router (Gemini 3.5 Flash). Remediated in 8.2ms.`;
+                consoleDiv.prepend(logLine2);
+            }, 400);
         }
 
         window.onload = function() {
