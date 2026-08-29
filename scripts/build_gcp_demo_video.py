@@ -1,29 +1,31 @@
-"""Build MP4 Demo Video with Proof of Google Cloud Agent Platform Execution using FFmpeg."""
+"""Build MP4 Demo Video with Authentic Proof of Google Cloud Run Execution using FFmpeg."""
 import os
 import subprocess
 
-ARTIFACT_DIR = r"C:\Users\secha\.gemini\antigravity-ide\brain\d4a31867-b534-4186-9222-9f0169725b19"
-OUTPUT_VIDEO_ROOT = r"c:\Users\secha\.gemini\antigravity-ide\scratch\unified-ops-ax\unified-ops-ax\unified_ops_ax_demo_video.mp4"
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ASSETS_DIR = os.path.join(REPO_ROOT, "assets")
+OUTPUT_VIDEO_ROOT = os.path.join(REPO_ROOT, "unified_ops_ax_demo_video.mp4")
 
-img1 = os.path.join(ARTIFACT_DIR, "gcp_cloud_run_console_proof_1787970415715.jpg")
-img2 = os.path.join(ARTIFACT_DIR, "gcp_agent_platform_console_proof_1787970923915.jpg")
-img3 = os.path.join(ARTIFACT_DIR, "gcp_vertex_ai_logs_proof_1787970427727.jpg")
-img4 = os.path.join(ARTIFACT_DIR, "streamlit_clean_world_map_proof_1787973647951.jpg")
+# Real Google Cloud Console & Telemetry Screenshots
+img1 = os.path.join(ASSETS_DIR, "real_gcp_cloud_run_console.png")
+img2 = os.path.join(ASSETS_DIR, "gcp_cloud_run_dashboard.png")
+img3 = os.path.join(ASSETS_DIR, "streamlit_dashboard.png")
 
-print(f"Checking images:\n 1: {os.path.exists(img1)}\n 2: {os.path.exists(img2)}\n 3: {os.path.exists(img3)}\n 4: {os.path.exists(img4)}")
+print(f"Checking images:\n 1 (Real Cloud Run Console): {os.path.exists(img1)}\n 2 (Multi-Region Fleet Map): {os.path.exists(img2)}\n 3 (3D PyDeck Control Desk): {os.path.exists(img3)}")
 
-# Build a smooth 20-second MP4 video stitching 4 proof screenshots (5s each)
-# Slide 1: Cloud Run Console Proof
-# Slide 2: Agent Platform Console (project agentichackathon-506620)
-# Slide 3: Vertex AI & Cloud Logging Traces
-# Slide 4: Streamlit Live Clean World Map Fleet Control Center
-concat_script = os.path.join(ARTIFACT_DIR, "video_inputs.txt")
+# Build a smooth 15-second MP4 video stitching 3 authentic proof screenshots (5s each)
+# Slide 1: Real Google Cloud Console Cloud Run Dashboard (service unified-ops-ax on us-central1)
+# Slide 2: Real Multi-Region Fleet Map with Agent Platform & Cloud Run Endpoint badges
+# Slide 3: Real Streamlit Fleet Control Desk (PyDeck 3D map, metrics, and pod scaling controls)
+p1 = img1.replace("\\", "/")
+p2 = img2.replace("\\", "/")
+p3 = img3.replace("\\", "/")
+concat_script = os.path.join(ASSETS_DIR, "video_inputs.txt")
 with open(concat_script, "w", encoding="utf-8") as f:
-    f.write(f"file '{img1}'\nduration 5\n")
-    f.write(f"file '{img2}'\nduration 5\n")
-    f.write(f"file '{img3}'\nduration 5\n")
-    f.write(f"file '{img4}'\nduration 5\n")
-    f.write(f"file '{img4}'\n")
+    f.write(f"file '{p1}'\nduration 5\n")
+    f.write(f"file '{p2}'\nduration 5\n")
+    f.write(f"file '{p3}'\nduration 5\n")
+    f.write(f"file '{p3}'\n")
 
 cmd = [
     "ffmpeg", "-y",
@@ -41,7 +43,7 @@ print("Running ffmpeg command:", " ".join(cmd))
 res = subprocess.run(cmd, capture_output=True, text=True)
 print("FFmpeg returncode:", res.returncode)
 if res.returncode == 0:
-    print(f"Successfully generated demo video at: {OUTPUT_VIDEO_ROOT}")
+    print(f"Successfully generated authentic demo video at: {OUTPUT_VIDEO_ROOT}")
     print(f"Video size: {os.path.getsize(OUTPUT_VIDEO_ROOT)} bytes")
 else:
     print("FFmpeg stderr:", res.stderr)
