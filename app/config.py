@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     gcp_project_id: str = "agentichackathon-506620"
     gcp_region: str = "us-central1"
     cloud_run_service_url: str = "https://unified-ops-ax-652787573242.us-central1.run.app"
-    agent_platform_url: str = "https://console.cloud.google.com/agent-platform/overview?project=agentichackathon-506620"
+    agent_platform_url: str = "https://console.cloud.google.com/run/detail/us-central1/unified-ops-ax/observability/metrics?project=agentichackathon-506620"
     vertex_ai_location: str = "us-central1"
     vertex_ai_model: str = "gemini-3.5-flash"
     firestore_collection: str = "activity_logs"
