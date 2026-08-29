@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     
-    <!-- Leaflet CSS & JS for Real CARTO Dark Matter Basemap -->
+    <!-- Leaflet CSS & JS for Free Dark World Map (No API Key Watermark) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -218,7 +218,7 @@
         .metric-value { font-family: 'Outfit', sans-serif; font-size: 1.7rem; font-weight: 800; color: #ffffff; margin: 0.2rem 0; }
         .metric-pill { display: inline-flex; align-items: center; gap: 0.3rem; background: var(--st-green-pill); color: var(--st-green-text); padding: 0.15rem 0.5rem; border-radius: 12px; font-size: 0.72rem; font-weight: 600; }
 
-        /* CARTO Dark Map Container */
+        /* Dark World Map Container */
         .map-card {
             background: #090d16;
             border: 1px solid var(--st-border);
@@ -236,7 +236,11 @@
             background: #090d16;
         }
 
-        /* Custom Leaflet Pulse Marker Styles */
+        /* Clean Dark Filter for Tile Map */
+        .leaflet-tile-pane {
+            filter: brightness(0.75) contrast(1.25) invert(0.9) hue-rotate(180deg);
+        }
+
         .pulse-marker {
             width: 16px;
             height: 16px;
@@ -264,7 +268,6 @@
         .view-section { display: none; }
         .view-section.active { display: block; }
 
-        /* Cards & Tables */
         .card {
             background: var(--st-card-bg);
             border: 1px solid var(--st-border);
@@ -379,7 +382,7 @@
                     </div>
                 </div>
 
-                <!-- Real CARTO Dark Matter World Map Container -->
+                <!-- 100% Free Watermark-Free Dark World Map Container -->
                 <div class="map-card">
                     <div id="leaflet-map"></div>
                 </div>
@@ -463,12 +466,12 @@
             document.getElementById('view-' + viewId).classList.add('active');
 
             if (viewId === 'fleet') {
-                setTimeout(initLeafletCartoMap, 100);
+                setTimeout(initLeafletCleanMap, 100);
             }
         }
 
-        // Initialize Real CARTO Dark Matter World Map via Leaflet
-        function initLeafletCartoMap() {
+        // Initialize Watermark-Free Dark World Map
+        function initLeafletCleanMap() {
             const container = document.getElementById('leaflet-map');
             if (!container) return;
 
@@ -477,27 +480,23 @@
                 return;
             }
 
-            // Center map on world (lat: 25, lng: 10, zoom: 2)
             leafletMap = L.map('leaflet-map', {
                 center: [25.0, 10.0],
                 zoom: 2,
                 zoomControl: true,
-                attributionControl: true
+                attributionControl: false
             });
 
-            // CARTO Dark Matter Basemap Tiles
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-                subdomains: 'abcd',
-                maxZoom: 19
+            // OpenStreetMap Standard Tiles with Inverted Sleek Dark Filter (100% Watermark Free!)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                subdomains: ['a', 'b', 'c']
             }).addTo(leafletMap);
 
-            // Coordinates for GCP Regions
             const nodeIowa = [41.878, -93.097];     // us-central1 (North America)
             const nodeBelgium = [50.454, 3.824];     // europe-west1 (Europe)
             const nodeTaiwan = [23.697, 120.960];    // asia-east1 (Asia)
 
-            // Custom Leaflet Pulse Marker HTML
             function createPulseIcon(color) {
                 return L.divIcon({
                     className: 'custom-pulse-marker',
@@ -507,7 +506,6 @@
                 });
             }
 
-            // Add Node Markers
             L.marker(nodeIowa, { icon: createPulseIcon('#ef4444') }).addTo(leafletMap)
                 .bindPopup('<strong style="color: #ef4444;">us-central1</strong><br>Iowa, USA (Active)');
             
@@ -517,7 +515,6 @@
             L.marker(nodeTaiwan, { icon: createPulseIcon('#3b82f6') }).addTo(leafletMap)
                 .bindPopup('<strong style="color: #3b82f6;">asia-east1</strong><br>Taiwan (Active)');
 
-            // Function to generate smooth curved Bezier polyline points
             function generateCurvePoints(start, end, bendOffset = 0.25) {
                 const lat1 = start[0], lng1 = start[1];
                 const lat2 = end[0], lng2 = end[1];
@@ -532,7 +529,6 @@
                 return points;
             }
 
-            // Draw Glowing Curved Telemetry Arcs
             const arc1 = generateCurvePoints(nodeIowa, nodeBelgium, 0.22);
             const arc2 = generateCurvePoints(nodeBelgium, nodeTaiwan, 0.18);
             const arc3 = generateCurvePoints(nodeIowa, nodeTaiwan, 0.35);
@@ -543,7 +539,7 @@
         }
 
         window.onload = function() {
-            setTimeout(initLeafletCartoMap, 150);
+            setTimeout(initLeafletCleanMap, 150);
         };
         window.onresize = function() {
             if (leafletMap) leafletMap.invalidateSize();
