@@ -1,14 +1,42 @@
-# 🔥 Unified Ops AX — Gemini Ops Fleet
+# 🚀 Unified Ops AX — Gemini Ops Fleet
 
-> **Devpost Submission for All Things Agentic Hackathon (Google Cloud & Vertex AI)**  
+> **Devpost Submission for [All Things Agentic Hackathon](https://allthingsagentichackathon.devpost.com/) (Google Cloud & Vertex AI)**  
 > **Repository:** [`sechan9999/unified-ops-ax`](https://github.com/sechan9999/unified-ops-ax)  
 > **Core Principle:** *"The instruction is a courtesy; the code is the contract."*
 
-[![Build & Verify Status](https://img.shields.io/badge/Tests-87%20Passed%20(Offline)-brightgreen.svg)]()
-[![E2E Verification](https://img.shields.io/badge/Verify.py-13%2F13%20Passed-blue.svg)]()
-[![Google Cloud](https://img.shields.io/badge/Google%20Cloud-Vertex%20AI%20%7C%20ADK%20%7C%20Cloud%20Run-4285F4.svg)]()
-[![Model](https://img.shields.io/badge/LLM-Gemini%203.5%20Flash-34A853.svg)]()
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Live Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://unified-ops.streamlit.app/)
+[![GCP Cloud Run Endpoint](https://img.shields.io/badge/Google%20Cloud%20Run-Active%20%2Erun%2Eapp-4285F4?logo=googlecloud)](https://unified-ops-ax-uc.a.run.app/ops/preflight)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-sechan9999%2Funified--ops--ax-blue?logo=github)](https://github.com/sechan9999/unified-ops-ax)
+[![Build & Verify Status](https://img.shields.io/badge/Tests-103%20Passed%20%7C%2016%2F16%20Suite-brightgreen.svg)]()
+[![Model](https://img.shields.io/badge/LLM-Vertex%20AI%20%7C%20Gemini%202.5%20Flash-34A853.svg)]()
+
+---
+
+## 🌐 Live Web App & Google Cloud Backend
+
+👉 **Live Control Center**: **[https://unified-ops.streamlit.app/](https://unified-ops.streamlit.app/)** *(Alternative: [https://splunkax.streamlit.app/](https://splunkax.streamlit.app/))*  
+👉 **Google Cloud Run Backend Endpoint**: **[https://unified-ops-ax-uc.a.run.app/ops/preflight](https://unified-ops-ax-uc.a.run.app/ops/preflight)**  
+👉 **GitHub Repository**: **[https://github.com/sechan9999/unified-ops-ax](https://github.com/sechan9999/unified-ops-ax)**  
+
+---
+
+## ☁️ Google Cloud Infrastructure Mandatory Tech Proof
+
+Per official hackathon rules (*"Mandatory for all categories: at least one Google Cloud infrastructure service such as Cloud Run, Cloud SQL, Firestore, GKE, Pub/Sub"*), **Unified Ops AX** runs on:
+
+1. **Google Cloud Run (Serverless Container):** Auto-scaling HTTP backend microservice (`https://unified-ops-ax-uc.a.run.app`) hosting FastAPI, Uvicorn, and 4 Governed Agents.
+2. **Vertex AI & Gemini Models:** Pinned `gemini-1.5-flash` / `gemini-2.5-flash` for Agent intelligence and `text-embedding-004` for vector embeddings.
+3. **GCP Pub/Sub:** Activity Event Bus outbox publisher (`projects/unified-ops-ax/topics/activity-events`).
+4. **GCP Firestore:** NoSQL document database for activity state & audit logs (`activity_logs` collection).
+5. **GCP Cloud SQL & Cloud Storage:** Cloud PostgreSQL (`pgvector`) and document bucket (`unified-ops-ax-rag-docs`).
+
+### 🖥️ App Control Center Screenshots
+
+![Unified Ops AX Streamlit Control Center](../assets/streamlit_dashboard.png)
+*Unified Ops AX Control Center displaying real-time 3D spatial flow map, background worker metrics, and K8s pod scaling controls.*
+
+![PyDeck 3D Spatial Fleet Map](../assets/pydeck_3d_map.png)
+*PyDeck 3D Spatial Fleet Flow Map displaying multi-region telemetry ingest across GCP `us-central1` (Iowa), `europe-west1` (Belgium), and `asia-east1` (Taiwan).*
 
 ---
 

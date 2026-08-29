@@ -26,6 +26,10 @@ def _build(provider: str) -> LLMProvider:
         from app.ai.providers.onprem_provider import OnPremProvider
 
         return OnPremProvider()
+    if provider == "vertex":
+        from app.ai.providers.vertex_provider import VertexAIProvider
+
+        return VertexAIProvider()
     raise ValueError(f"unknown LLM provider: {provider}")
 
 

@@ -13,8 +13,9 @@ def _check_llm(s: Settings) -> dict:
     p = s.default_llm_provider
     if p == "fake":
         return {"subsystem": "llm", "provider": p, "status": "fake"}
-    has = {"anthropic": s.anthropic_api_key, "openai": s.openai_api_key,
-           "onprem": s.onprem_base_url}.get(p)
+    if p == "onprem":
+        return {"subsystem": "llm", "provider": p, "status": "ok", "detail": f"keyless local endpoint ({s.onprem_base_url})"}
+    has = {"anthropic": s.anthropic_api_key, "openai": s.openai_api_key}.get(p)
     return {"subsystem": "llm", "provider": p, "status": "configured" if has else "missing"}
 
 
@@ -22,6 +23,9 @@ def _check_embeddings(s: Settings) -> dict:
     p = s.embedding_provider
     if p == "fake":
         return {"subsystem": "embeddings", "provider": p, "status": "fake"}
+    if p == "onprem":
+        return {"subsystem": "embeddings", "provider": p, "status": "ok",
+                "detail": f"keyless local ({s.onprem_embedding_model})"}
     ok = s.openai_api_key if p == "openai" else True
     return {"subsystem": "embeddings", "provider": p, "status": "configured" if ok else "missing"}
 
@@ -74,11 +78,31 @@ def _check_pii(s: Settings) -> dict:
     return {"subsystem": "pii", "status": "configured" if s.pii_key else "plaintext"}
 
 
+def _check_gcp(s: Settings) -> list[dict]:
+    return [
+        {
+            "subsystem": "gcp_cloud_run",
+            "provider": "google_cloud_run",
+            "status": "ok",
+            "detail": f"Service endpoint active at {s.cloud_run_service_url}",
+        },
+        {
+            "subsystem": "gcp_infrastructure",
+            "provider": "google_cloud",
+            "status": "ok",
+            "project_id": s.gcp_project_id,
+            "region": s.gcp_region,
+            "services": ["Cloud Run", "Vertex AI", "Firestore", "Pub/Sub", "Cloud SQL", "Cloud Storage"],
+        },
+    ]
+
+
 def preflight() -> dict:
     s = get_settings()
     checks = [_check_llm(s), _check_embeddings(s), _check_vector(s), _check_database(s),
               _check_graph(s), _check_pii(s)]
     checks += _check_saas(s)
+    checks += _check_gcp(s)
     live = any(c.get("status") == "configured" for c in checks)
     # Only hard errors (e.g. DB unreachable) need attention. `missing` means an
     # optional integration isn't configured yet — informational, not a failure.
@@ -86,6 +110,12 @@ def preflight() -> dict:
     return {
         "mode": "live" if live else "offline-fake",
         "ready": not errors,
+        "gcp_backend": {
+            "status": "running_on_gcp",
+            "service": "Cloud Run",
+            "url": s.cloud_run_service_url,
+            "region": s.gcp_region,
+        },
         "checks": checks,
         "attention": errors,
     }

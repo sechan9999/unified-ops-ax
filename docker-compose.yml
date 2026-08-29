@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - GCP_PROJECT_ID=agentichackathon-506620
+      - GCP_REGION=us-central1
+      - DEFAULT_LLM_PROVIDER=vertex
+      - EMBEDDING_PROVIDER=vertex

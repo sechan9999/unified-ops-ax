@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     database_url: str = "sqlite+pysqlite:///./unified_ops.db"
 
     # AI Gateway
-    default_llm_provider: str = "fake"  # fake | anthropic | openai | onprem
+    default_llm_provider: str = "fake"  # fake | anthropic | openai | onprem | vertex
     anthropic_api_key: Optional[str] = None
     anthropic_model: str = "claude-opus-4-8"
     openai_api_key: Optional[str] = None
@@ -21,9 +21,22 @@ class Settings(BaseSettings):
     onprem_base_url: str = "http://localhost:11434"
     onprem_model: str = "llama3"
 
+    # Google Cloud Infrastructure, Vertex AI & Agent Platform
+    gcp_project_id: str = "agentichackathon-506620"
+    gcp_region: str = "us-central1"
+    cloud_run_service_url: str = "https://unified-ops-ax-506620-uc.a.run.app"
+    agent_platform_url: str = "https://console.cloud.google.com/agent-platform/overview?project=agentichackathon-506620"
+    vertex_ai_location: str = "us-central1"
+    vertex_ai_model: str = "gemini-1.5-flash"
+    firestore_collection: str = "activity_logs"
+    pubsub_topic: str = "projects/agentichackathon-506620/topics/activity-events"
+    gcs_bucket_name: str = "agentichackathon-506620-rag-docs"
+    cloud_sql_instance: Optional[str] = "agentichackathon-506620:us-central1:unified-ops-db"
+
     # Embeddings
-    embedding_provider: str = "fake"  # fake | openai | onprem
+    embedding_provider: str = "fake"  # fake | openai | onprem | vertex
     embedding_dim: int = 384
+    onprem_embedding_model: str = "nomic-embed-text"  # keyless local embeddings (Ollama)
 
     # Vector store
     vector_backend: str = "memory"  # memory | pgvector

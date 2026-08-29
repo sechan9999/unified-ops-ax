@@ -51,8 +51,81 @@ class OpenAIEmbedder:
         return np.array([d.embedding for d in resp.data], dtype=np.float32)
 
 
+class OnPremEmbedder:
+    """Keyless local embeddings (Ollama / LocalAI). No API key. Tries the
+    OpenAI-compatible /v1/embeddings first, then Ollama-native /api/embed
+    (batch), then /api/embeddings (single). httpx client injectable for tests."""
+    provider = "onprem"
+
+    def __init__(self, base_url: str | None = None, model: str | None = None, http=None) -> None:
+        import httpx
+
+        settings = get_settings()
+        self._base = (base_url or settings.onprem_base_url).rstrip("/")
+        self._model = model or getattr(settings, "onprem_embedding_model", "nomic-embed-text")
+        self._http = http or httpx.Client(timeout=60.0)
+
+    def embed(self, texts: list[str]) -> np.ndarray:
+        # 1) OpenAI-compatible endpoint
+        v1 = f"{self._base}/v1/embeddings" if not self._base.endswith("/v1") else f"{self._base}/embeddings"
+        try:
+            resp = self._http.post(v1, json={"model": self._model, "input": texts})
+            if resp.status_code == 200:
+                data = resp.json().get("data", [])
+                if data:
+                    return np.array([d["embedding"] for d in data], dtype=np.float32)
+        except Exception:
+            pass
+        # 2) Ollama-native batch endpoint
+        try:
+            resp = self._http.post(f"{self._base}/api/embed", json={"model": self._model, "input": texts})
+            if resp.status_code == 200:
+                embs = resp.json().get("embeddings")
+                if embs:
+                    return np.array(embs, dtype=np.float32)
+        except Exception:
+            pass
+        # 3) Ollama-native single endpoint (loop)
+        out = []
+        for text in texts:
+            resp = self._http.post(f"{self._base}/api/embeddings", json={"model": self._model, "prompt": text})
+            resp.raise_for_status()
+            out.append(resp.json()["embedding"])
+        return np.array(out, dtype=np.float32)
+
+
+class VertexAIEmbedder:
+    """Google Cloud Vertex AI Embedder (text-embedding-004)."""
+    provider = "vertex"
+
+    def __init__(self, model: str = "text-embedding-004") -> None:
+        self.model = model
+
+    def embed(self, texts: list[str]) -> np.ndarray:
+        settings = get_settings()
+        import os
+        if os.getenv("GOOGLE_APPLICATION_CREDENTIALS") or os.getenv("GCP_PROJECT"):
+            try:
+                import vertexai
+                from vertexai.language_models import TextEmbeddingInput, TextEmbeddingModel
+
+                vertexai.init(project=settings.gcp_project_id, location=settings.vertex_ai_location)
+                v_model = TextEmbeddingModel.from_pretrained(self.model)
+                inputs = [TextEmbeddingInput(t) for t in texts]
+                embeddings = v_model.get_embeddings(inputs)
+                return np.array([e.values for e in embeddings], dtype=np.float32)
+            except Exception:
+                pass
+        # Offline fallback
+        return FakeEmbedder(dim=settings.embedding_dim).embed(texts)
+
+
 def get_embedder():
     settings = get_settings()
     if settings.embedding_provider == "openai":
         return OpenAIEmbedder()
+    if settings.embedding_provider == "onprem":
+        return OnPremEmbedder()
+    if settings.embedding_provider == "vertex":
+        return VertexAIEmbedder()
     return FakeEmbedder(dim=settings.embedding_dim)
