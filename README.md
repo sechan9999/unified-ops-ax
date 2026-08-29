@@ -33,10 +33,10 @@ Per official hackathon rules (*"Mandatory for all categories: at least one Googl
 
 ### 🖥️ App Control Center Screenshots
 
-![Unified Ops AX Streamlit Control Center](../assets/streamlit_dashboard.png)
+![Unified Ops AX Streamlit Control Center](assets/streamlit_dashboard.png)
 *Unified Ops AX Control Center displaying real-time 3D spatial flow map, background worker metrics, and K8s pod scaling controls.*
 
-![PyDeck 3D Spatial Fleet Map](../assets/pydeck_3d_map.png)
+![PyDeck 3D Spatial Fleet Map](assets/pydeck_3d_map.png)
 *PyDeck 3D Spatial Fleet Flow Map displaying multi-region telemetry ingest across GCP `us-central1` (Iowa), `europe-west1` (Belgium), and `asia-east1` (Taiwan).*
 
 ---
