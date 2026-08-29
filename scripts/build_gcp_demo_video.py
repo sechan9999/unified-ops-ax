@@ -8,7 +8,7 @@ OUTPUT_VIDEO_ROOT = r"c:\Users\secha\.gemini\antigravity-ide\scratch\unified-ops
 img1 = os.path.join(ARTIFACT_DIR, "gcp_cloud_run_console_proof_1787970415715.jpg")
 img2 = os.path.join(ARTIFACT_DIR, "gcp_agent_platform_console_proof_1787970923915.jpg")
 img3 = os.path.join(ARTIFACT_DIR, "gcp_vertex_ai_logs_proof_1787970427727.jpg")
-img4 = os.path.join(ARTIFACT_DIR, "streamlit_gcp_control_center_proof_1787970439602.jpg")
+img4 = os.path.join(ARTIFACT_DIR, "streamlit_carto_fleet_control_center_proof_1787973016857.jpg")
 
 print(f"Checking images:\n 1: {os.path.exists(img1)}\n 2: {os.path.exists(img2)}\n 3: {os.path.exists(img3)}\n 4: {os.path.exists(img4)}")
 
@@ -16,7 +16,7 @@ print(f"Checking images:\n 1: {os.path.exists(img1)}\n 2: {os.path.exists(img2)}
 # Slide 1: Cloud Run Console Proof
 # Slide 2: Agent Platform Console (project agentichackathon-506620)
 # Slide 3: Vertex AI & Cloud Logging Traces
-# Slide 4: Streamlit Live Control Center (unified-ops.streamlit.app)
+# Slide 4: Streamlit Live CARTO Fleet Control Center (unified-ops.streamlit.app)
 concat_script = os.path.join(ARTIFACT_DIR, "video_inputs.txt")
 with open(concat_script, "w", encoding="utf-8") as f:
     f.write(f"file '{img1}'\nduration 5\n")
