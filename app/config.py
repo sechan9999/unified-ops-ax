@@ -24,10 +24,10 @@ class Settings(BaseSettings):
     # Google Cloud Infrastructure, Vertex AI & Agent Platform
     gcp_project_id: str = "agentichackathon-506620"
     gcp_region: str = "us-central1"
-    cloud_run_service_url: str = "https://unified-ops-ax-506620-uc.a.run.app"
+    cloud_run_service_url: str = "https://unified-ops-ax-652787573242.us-central1.run.app"
     agent_platform_url: str = "https://console.cloud.google.com/agent-platform/overview?project=agentichackathon-506620"
     vertex_ai_location: str = "us-central1"
-    vertex_ai_model: str = "gemini-1.5-flash"
+    vertex_ai_model: str = "gemini-3.6-flash"
     firestore_collection: str = "activity_logs"
     pubsub_topic: str = "projects/agentichackathon-506620/topics/activity-events"
     gcs_bucket_name: str = "agentichackathon-506620-rag-docs"

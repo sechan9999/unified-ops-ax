@@ -1,0 +1,46 @@
+/* Custom Cyber-Ops Glassmorphic Styling for Streamlit */
+div[data-testid="stMetric"] {
+    background-color: #161F30;
+    border: 1px solid #1F293D;
+    border-radius: 8px;
+    padding: 14px 18px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+}
+
+div[data-testid="stMetric"]:hover {
+    border-color: #00FFA3;
+    transition: border-color 0.3s ease;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-active {
+    background-color: rgba(0, 255, 163, 0.15);
+    color: #00FFA3;
+    border: 1px solid #00FFA3;
+}
+
+.status-warning {
+    background-color: rgba(255, 193, 7, 0.15);
+    color: #FFC107;
+    border: 1px solid #FFC107;
+}
+
+.status-critical {
+    background-color: rgba(255, 75, 75, 0.15);
+    color: #FF4B4B;
+    border: 1px solid #FF4B4B;
+}
+
+.status-idle {
+    background-color: rgba(156, 163, 175, 0.15);
+    color: #9CA3AF;
+    border: 1px solid #9CA3AF;
+}

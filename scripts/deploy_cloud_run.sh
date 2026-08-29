@@ -22,7 +22,7 @@ gcloud run deploy "${SERVICE_NAME}" \
   --cpu 1 \
   --min-instances 0 \
   --max-instances 10 \
-  --set-env-vars "GCP_PROJECT_ID=${PROJECT_ID},GCP_REGION=${REGION},DEFAULT_LLM_PROVIDER=vertex" \
+  --set-env-vars "GCP_PROJECT_ID=${PROJECT_ID},GCP_REGION=${REGION},DEFAULT_LLM_PROVIDER=vertex,CLOUD_RUN_SERVICE_URL=https://unified-ops-ax-652787573242.us-central1.run.app" \
   --project "${PROJECT_ID}"
 
 echo "=== Cloud Run Deployment Successful! ==="

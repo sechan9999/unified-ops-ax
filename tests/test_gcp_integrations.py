@@ -51,6 +51,6 @@ def test_preflight_gcp_reporting():
     data = preflight()
     assert data["ready"] is True
     assert data["gcp_backend"]["service"] == "Cloud Run"
-    assert "https://unified-ops-ax-506620-uc.a.run.app" in data["gcp_backend"]["url"]
+    assert "https://unified-ops-ax-652787573242.us-central1.run.app" in data["gcp_backend"]["url"]
     gcp_checks = [c for c in data["checks"] if c["subsystem"].startswith("gcp_")]
     assert len(gcp_checks) >= 2

@@ -33,7 +33,7 @@ flowchart TB
     end
 
     subgraph InfraLayer["Google Cloud Platform"]
-        gemini["Vertex AI<br/>Gemini 3.5 Flash"]
+        gemini["Vertex AI<br/>Gemini 3.6 Flash"]
         sql[("Cloud SQL Postgres<br/>fleet data + ADK sessions")]
         armor["Model Armor<br/>Safety Plugin"]
         trace["Cloud Trace / OpenTelemetry<br/>fleet.access_denied Spans"]
@@ -69,7 +69,7 @@ flowchart TD
 
     auth --> guard_check
     guard_check -->|Blocked| stop_guard["Refusal: 400 Bad Request<br/>fleet.guardrail_blocked = true"]
-    guard_check -->|Clean| llm_call["Gemini 3.5 Flash<br/>Generates Tool Call"]
+    guard_check -->|Clean| llm_call["Gemini 3.6 Flash<br/>Generates Tool Call"]
 
     subgraph ToolACL["2. Zero-Trust Tool Execution"]
         acl_check{"May caller's role<br/>invoke target tool?"}

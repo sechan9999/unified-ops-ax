@@ -5,30 +5,31 @@
 > **Core Principle:** *"The instruction is a courtesy; the code is the contract."*
 
 [![Live Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://unified-ops.streamlit.app/)
-[![GCP Cloud Run Endpoint](https://img.shields.io/badge/Google%20Cloud%20Run-Active%20%2Erun%2Eapp-4285F4?logo=googlecloud)](https://unified-ops-ax-uc.a.run.app/ops/preflight)
+[![GCP Cloud Run Endpoint](https://img.shields.io/badge/Google%20Cloud%20Run-Active%20%2Erun%2Eapp-4285F4?logo=googlecloud)](https://unified-ops-ax-652787573242.us-central1.run.app/ops/preflight)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-sechan9999%2Funified--ops--ax-blue?logo=github)](https://github.com/sechan9999/unified-ops-ax)
 [![Build & Verify Status](https://img.shields.io/badge/Tests-103%20Passed%20%7C%2016%2F16%20Suite-brightgreen.svg)]()
-[![Model](https://img.shields.io/badge/LLM-Vertex%20AI%20%7C%20Gemini%202.5%20Flash-34A853.svg)]()
+[![Model](https://img.shields.io/badge/LLM-Vertex%20AI%20%7C%20Gemini%203.6%20Flash-34A853.svg)]()
 
 ---
 
 ## 🌐 Live Web App & Google Cloud Backend
 
 👉 **Live Control Center**: **[https://unified-ops.streamlit.app/](https://unified-ops.streamlit.app/)** *(Alternative: [https://splunkax.streamlit.app/](https://splunkax.streamlit.app/))*  
-👉 **Google Cloud Run Backend Endpoint**: **[https://unified-ops-ax-uc.a.run.app/ops/preflight](https://unified-ops-ax-uc.a.run.app/ops/preflight)**  
+👉 **Google Cloud Run Backend Endpoint**: **[https://unified-ops-ax-652787573242.us-central1.run.app/ops/preflight](https://unified-ops-ax-652787573242.us-central1.run.app/ops/preflight)**  
 👉 **GitHub Repository**: **[https://github.com/sechan9999/unified-ops-ax](https://github.com/sechan9999/unified-ops-ax)**  
 
 ---
 
 ## ☁️ Google Cloud Infrastructure Mandatory Tech Proof
 
-Per official hackathon rules (*"Mandatory for all categories: at least one Google Cloud infrastructure service such as Cloud Run, Cloud SQL, Firestore, GKE, Pub/Sub"*), **Unified Ops AX** runs on:
+Per official hackathon rules (*"Mandatory for all categories: at least one Google Cloud infrastructure service such as Cloud Run, Cloud SQL, Firestore, GKE, Pub/Sub"*), **Unified Ops AX** leverages **6 Google Cloud Infrastructure & AI services**:
 
-1. **Google Cloud Run (Serverless Container):** Auto-scaling HTTP backend microservice (`https://unified-ops-ax-uc.a.run.app`) hosting FastAPI, Uvicorn, and 4 Governed Agents.
-2. **Vertex AI & Gemini Models:** Pinned `gemini-1.5-flash` / `gemini-2.5-flash` for Agent intelligence and `text-embedding-004` for vector embeddings.
-3. **GCP Pub/Sub:** Activity Event Bus outbox publisher (`projects/unified-ops-ax/topics/activity-events`).
-4. **GCP Firestore:** NoSQL document database for activity state & audit logs (`activity_logs` collection).
-5. **GCP Cloud SQL & Cloud Storage:** Cloud PostgreSQL (`pgvector`) and document bucket (`unified-ops-ax-rag-docs`).
+1. **Google Cloud Run (Serverless Container Host):** Live auto-scaling HTTP backend microservice at [`https://unified-ops-ax-652787573242.us-central1.run.app`](https://unified-ops-ax-652787573242.us-central1.run.app/ops/preflight) running FastAPI, Uvicorn, 4 Governed Agents, and MCP endpoints.
+2. **Vertex AI & Gemini Models:** Pinned `gemini-3.6-flash` via Vertex AI Generative AI SDK for agent reasoning ([app/ai/providers/vertex_provider.py](file:///c:/Users/secha/.gemini/antigravity-ide/scratch/unified-ops-ax/unified-ops-ax/app/ai/providers/vertex_provider.py)) and `text-embedding-004` for vector search.
+3. **GCP Pub/Sub (Activity Event Bus):** Transactional outbox event bus publishing activity streams to topic `projects/agentichackathon-506620/topics/activity-events` ([app/gcp/pubsub.py](file:///c:/Users/secha/.gemini/antigravity-ide/scratch/unified-ops-ax/unified-ops-ax/app/gcp/pubsub.py)).
+4. **GCP Firestore (NoSQL Document Store):** Audit logging & activity state persistence under collection `activity_logs` ([app/gcp/firestore.py](file:///c:/Users/secha/.gemini/antigravity-ide/scratch/unified-ops-ax/unified-ops-ax/app/gcp/firestore.py)).
+5. **GCP Cloud Storage (GCS Bucket):** Knowledge base document store bucket `gs://agentichackathon-506620-rag-docs` ([app/gcp/storage.py](file:///c:/Users/secha/.gemini/antigravity-ide/scratch/unified-ops-ax/unified-ops-ax/app/gcp/storage.py)).
+6. **GCP Cloud SQL (PostgreSQL with `pgvector`):** Enterprise relational DB instance `agentichackathon-506620:us-central1:unified-ops-db` with SQL-level security trimming ([app/db.py](file:///c:/Users/secha/.gemini/antigravity-ide/scratch/unified-ops-ax/unified-ops-ax/app/db.py)).
 
 ### 🖥️ App Control Center Screenshots
 
@@ -124,7 +125,7 @@ Governance          Audit Log, Adoption KPIs, Data Ownership (app/governance) + 
 ## 🛠️ How We Built It
 
 - **Google Cloud & Vertex AI Stack:**
-  - **Gemini 3.5 Flash via Vertex AI**, pinned explicitly to avoid non-deterministic model drift.
+  - **Gemini 3.6 Flash via Vertex AI**, pinned explicitly to avoid non-deterministic model drift.
   - **Google Agent Developer Kit (ADK):** Configured using the Agent-to-Agent (A2A) template exposing agent capability cards.
   - **Cloud Infrastructure:** Cloud Run (scale-to-zero), Cloud SQL Postgres, Pub/Sub with OIDC push subscriptions, Secret Manager, Model Armor guardrails, Cloud Trace, and Memory Bank Agent Engine.
 - **Offline First Engineering Principle:**
