@@ -7,6 +7,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS & JS for Real CARTO Dark Matter Basemap -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <style>
         :root {
             --st-bg: #0e1117;
@@ -111,23 +116,9 @@
             color: #ffffff;
         }
 
-        .st-brand-sub {
-            font-size: 0.8rem;
-            color: var(--st-text-sub);
-        }
-
-        .st-divider {
-            height: 1px;
-            background: var(--st-border);
-            margin: 0.3rem 0;
-        }
-
-        .st-section-label {
-            font-size: 0.75rem;
-            color: #6b7280;
-            font-weight: 600;
-            margin-top: 0.25rem;
-        }
+        .st-brand-sub { font-size: 0.8rem; color: var(--st-text-sub); }
+        .st-divider { height: 1px; background: var(--st-border); margin: 0.3rem 0; }
+        .st-section-label { font-size: 0.75rem; color: #6b7280; font-weight: 600; margin-top: 0.25rem; }
 
         .st-nav-link {
             background: transparent;
@@ -144,10 +135,7 @@
             transition: all 0.15s;
         }
 
-        .st-nav-link:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: #ffffff;
-        }
+        .st-nav-link:hover { background: rgba(255, 255, 255, 0.05); color: #ffffff; }
 
         .st-nav-link.active {
             background: rgba(249, 115, 22, 0.15);
@@ -176,7 +164,6 @@
             align-items: center;
         }
 
-        /* Main Header Title */
         .main-header-title {
             font-family: 'Outfit', sans-serif;
             font-size: 1.9rem;
@@ -188,11 +175,7 @@
             margin-bottom: 0.2rem;
         }
 
-        .main-header-sub {
-            font-size: 0.9rem;
-            color: var(--st-text-sub);
-            margin-bottom: 1.5rem;
-        }
+        .main-header-sub { font-size: 0.9rem; color: var(--st-text-sub); margin-bottom: 1.5rem; }
 
         .section-title {
             font-family: 'Outfit', sans-serif;
@@ -205,11 +188,7 @@
             margin-bottom: 0.3rem;
         }
 
-        .section-sub {
-            font-size: 0.88rem;
-            color: var(--st-text-sub);
-            margin-bottom: 1.25rem;
-        }
+        .section-sub { font-size: 0.88rem; color: var(--st-text-sub); margin-bottom: 1.25rem; }
 
         .region-tag {
             background: rgba(16, 185, 129, 0.15);
@@ -235,30 +214,9 @@
             padding: 1rem 1.15rem;
         }
 
-        .metric-label {
-            font-size: 0.8rem;
-            color: var(--st-text-sub);
-        }
-
-        .metric-value {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.7rem;
-            font-weight: 800;
-            color: #ffffff;
-            margin: 0.2rem 0;
-        }
-
-        .metric-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            background: var(--st-green-pill);
-            color: var(--st-green-text);
-            padding: 0.15rem 0.5rem;
-            border-radius: 12px;
-            font-size: 0.72rem;
-            font-weight: 600;
-        }
+        .metric-label { font-size: 0.8rem; color: var(--st-text-sub); }
+        .metric-value { font-family: 'Outfit', sans-serif; font-size: 1.7rem; font-weight: 800; color: #ffffff; margin: 0.2rem 0; }
+        .metric-pill { display: inline-flex; align-items: center; gap: 0.3rem; background: var(--st-green-pill); color: var(--st-green-text); padding: 0.15rem 0.5rem; border-radius: 12px; font-size: 0.72rem; font-weight: 600; }
 
         /* CARTO Dark Map Container */
         .map-card {
@@ -271,27 +229,42 @@
             margin-bottom: 1.75rem;
         }
 
-        canvas#pydeck-canvas {
+        #leaflet-map {
             width: 100%;
             height: 100%;
-            display: block;
+            border-radius: 12px;
+            background: #090d16;
         }
 
-        .carto-attribution {
+        /* Custom Leaflet Pulse Marker Styles */
+        .pulse-marker {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .pulse-marker::after {
+            content: '';
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
             position: absolute;
-            bottom: 8px;
-            right: 12px;
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.4);
-            background: rgba(0, 0, 0, 0.6);
-            padding: 2px 6px;
-            border-radius: 3px;
+            top: -8px;
+            left: -8px;
+            border: 2px solid currentColor;
+            animation: pulse-ring 1.8s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(0.5); opacity: 1; }
+            100% { transform: scale(1.6); opacity: 0; }
         }
 
         .view-section { display: none; }
         .view-section.active { display: block; }
 
-        /* Tables & Cards */
+        /* Cards & Tables */
         .card {
             background: var(--st-card-bg);
             border: 1px solid var(--st-border);
@@ -347,10 +320,10 @@
             </div>
         </aside>
 
-        <!-- Main Body Workspace -->
+        <!-- Main Workspace -->
         <main class="st-main">
 
-            <!-- Top GCP Infrastructure Status Banner (Hackathon Proof) -->
+            <!-- Top GCP Banner -->
             <div class="gcp-banner">
                 <div>
                     <span style="font-size: 1rem; font-weight: 700; color: #ffffff;">☁️ Unified Ops AX — Google Cloud Agent Platform Backend (agentichackathon-506620)</span>
@@ -382,7 +355,7 @@
                     <span class="region-tag">asia-east1</span> ).
                 </div>
 
-                <!-- 4 Metric Cards Grid -->
+                <!-- 4 Streamlit Metrics Card -->
                 <div class="metrics-grid">
                     <div class="metric-card">
                         <div class="metric-label">Active Regions</div>
@@ -406,10 +379,9 @@
                     </div>
                 </div>
 
-                <!-- CARTO Dark World Map Canvas with 3D Arcs -->
+                <!-- Real CARTO Dark Matter World Map Container -->
                 <div class="map-card">
-                    <canvas id="pydeck-canvas"></canvas>
-                    <div class="carto-attribution">© CARTO © OpenStreetMap contributors</div>
+                    <div id="leaflet-map"></div>
                 </div>
             </section>
 
@@ -480,6 +452,8 @@
     </div>
 
     <script>
+        let leafletMap = null;
+
         function switchTab(viewId) {
             document.querySelectorAll('.st-nav-link').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
@@ -489,120 +463,91 @@
             document.getElementById('view-' + viewId).classList.add('active');
 
             if (viewId === 'fleet') {
-                drawWorldMap();
+                setTimeout(initLeafletCartoMap, 100);
             }
         }
 
-        // Render CARTO Dark Map & 3D Spatial Arcs
-        function drawWorldMap() {
-            const canvas = document.getElementById('pydeck-canvas');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = 480;
+        // Initialize Real CARTO Dark Matter World Map via Leaflet
+        function initLeafletCartoMap() {
+            const container = document.getElementById('leaflet-map');
+            if (!container) return;
 
-            const W = canvas.width;
-            const H = canvas.height;
-
-            // Fill dark map background (#0c121e)
-            ctx.fillStyle = '#0c121e';
-            ctx.fillRect(0, 0, W, H);
-
-            // Draw simplified world continent outlines
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.07)';
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
-            ctx.lineWidth = 1;
-
-            // North America
-            ctx.beginPath();
-            ctx.ellipse(W * 0.25, H * 0.35, 110, 60, -0.2, 0, Math.PI * 2);
-            ctx.fill(); ctx.stroke();
-
-            // South America
-            ctx.beginPath();
-            ctx.ellipse(W * 0.34, H * 0.72, 50, 75, 0.3, 0, Math.PI * 2);
-            ctx.fill(); ctx.stroke();
-
-            // Europe
-            ctx.beginPath();
-            ctx.ellipse(W * 0.52, H * 0.30, 55, 35, 0, 0, Math.PI * 2);
-            ctx.fill(); ctx.stroke();
-
-            // Africa
-            ctx.beginPath();
-            ctx.ellipse(W * 0.53, H * 0.60, 55, 70, 0, 0, Math.PI * 2);
-            ctx.fill(); ctx.stroke();
-
-            // Asia
-            ctx.beginPath();
-            ctx.ellipse(W * 0.75, H * 0.35, 120, 70, 0, 0, Math.PI * 2);
-            ctx.fill(); ctx.stroke();
-
-            // Australia
-            ctx.beginPath();
-            ctx.ellipse(W * 0.85, H * 0.75, 45, 35, 0, 0, Math.PI * 2);
-            ctx.fill(); ctx.stroke();
-
-            // Text Labels on Continents
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
-            ctx.font = '700 11px sans-serif';
-            ctx.fillText('NORTH AMERICA', W * 0.20, H * 0.36);
-            ctx.fillText('SOUTH AMERICA', W * 0.29, H * 0.72);
-            ctx.fillText('EUROPE', W * 0.49, H * 0.31);
-            ctx.fillText('AFRICA', W * 0.50, H * 0.60);
-            ctx.fillText('ASIA', W * 0.74, H * 0.36);
-            ctx.fillText('AUSTRALIA', W * 0.81, H * 0.76);
-
-            // Region Nodes: NA (us-central1), EU (europe-west1), AS (asia-east1)
-            const pNA = { x: W * 0.26, y: H * 0.40, color: '#ef4444', label: 'us-central1' };
-            const pEU = { x: W * 0.52, y: H * 0.33, color: '#10b981', label: 'europe-west1' };
-            const pAS = { x: W * 0.81, y: H * 0.45, color: '#3b82f6', label: 'asia-east1' };
-
-            // Draw Curved Glowing Arcs
-            function drawArc(from, to, color) {
-                ctx.beginPath();
-                ctx.strokeStyle = color;
-                ctx.lineWidth = 3;
-                const mx = (from.x + to.x) / 2;
-                const my = Math.min(from.y, to.y) - 100;
-                ctx.moveTo(from.x, from.y);
-                ctx.quadraticCurveTo(mx, my, to.x, to.y);
-                ctx.stroke();
-
-                // Outer Glow
-                ctx.strokeStyle = color;
-                ctx.lineWidth = 8;
-                ctx.globalAlpha = 0.3;
-                ctx.stroke();
-                ctx.globalAlpha = 1.0;
+            if (leafletMap) {
+                leafletMap.invalidateSize();
+                return;
             }
 
-            drawArc(pNA, pEU, '#10b981'); // Green Arc NA -> EU
-            drawArc(pEU, pAS, '#3b82f6'); // Blue Arc EU -> AS
-            drawArc(pNA, pAS, '#06b6d4'); // Cyan Arc NA -> AS
-
-            // Draw Glowing Node Dots
-            [pNA, pEU, pAS].forEach(p => {
-                ctx.beginPath();
-                ctx.fillStyle = p.color;
-                ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
-                ctx.fill();
-
-                ctx.shadowColor = p.color;
-                ctx.shadowBlur = 15;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, 10, 0, Math.PI * 2);
-                ctx.fillStyle = p.color;
-                ctx.fill();
-                ctx.shadowBlur = 0;
+            // Center map on world (lat: 25, lng: 10, zoom: 2)
+            leafletMap = L.map('leaflet-map', {
+                center: [25.0, 10.0],
+                zoom: 2,
+                zoomControl: true,
+                attributionControl: true
             });
+
+            // CARTO Dark Matter Basemap Tiles
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 19
+            }).addTo(leafletMap);
+
+            // Coordinates for GCP Regions
+            const nodeIowa = [41.878, -93.097];     // us-central1 (North America)
+            const nodeBelgium = [50.454, 3.824];     // europe-west1 (Europe)
+            const nodeTaiwan = [23.697, 120.960];    // asia-east1 (Asia)
+
+            // Custom Leaflet Pulse Marker HTML
+            function createPulseIcon(color) {
+                return L.divIcon({
+                    className: 'custom-pulse-marker',
+                    html: `<div class="pulse-marker" style="background-color: ${color}; color: ${color}; boxShadow: 0 0 12px ${color};"></div>`,
+                    iconSize: [16, 16],
+                    iconAnchor: [8, 8]
+                });
+            }
+
+            // Add Node Markers
+            L.marker(nodeIowa, { icon: createPulseIcon('#ef4444') }).addTo(leafletMap)
+                .bindPopup('<strong style="color: #ef4444;">us-central1</strong><br>Iowa, USA (Active)');
+            
+            L.marker(nodeBelgium, { icon: createPulseIcon('#10b981') }).addTo(leafletMap)
+                .bindPopup('<strong style="color: #10b981;">europe-west1</strong><br>Belgium (Active)');
+            
+            L.marker(nodeTaiwan, { icon: createPulseIcon('#3b82f6') }).addTo(leafletMap)
+                .bindPopup('<strong style="color: #3b82f6;">asia-east1</strong><br>Taiwan (Active)');
+
+            // Function to generate smooth curved Bezier polyline points
+            function generateCurvePoints(start, end, bendOffset = 0.25) {
+                const lat1 = start[0], lng1 = start[1];
+                const lat2 = end[0], lng2 = end[1];
+                const midLat = (lat1 + lat2) / 2 + (Math.abs(lng2 - lng1) * bendOffset);
+                const midLng = (lng1 + lng2) / 2;
+                const points = [];
+                for (let t = 0; t <= 1; t += 0.04) {
+                    const lat = (1-t)*(1-t)*lat1 + 2*(1-t)*t*midLat + t*t*lat2;
+                    const lng = (1-t)*(1-t)*lng1 + 2*(1-t)*t*midLng + t*t*lng2;
+                    points.push([lat, lng]);
+                }
+                return points;
+            }
+
+            // Draw Glowing Curved Telemetry Arcs
+            const arc1 = generateCurvePoints(nodeIowa, nodeBelgium, 0.22);
+            const arc2 = generateCurvePoints(nodeBelgium, nodeTaiwan, 0.18);
+            const arc3 = generateCurvePoints(nodeIowa, nodeTaiwan, 0.35);
+
+            L.polyline(arc1, { color: '#10b981', weight: 3.5, opacity: 0.95 }).addTo(leafletMap);
+            L.polyline(arc2, { color: '#3b82f6', weight: 3.5, opacity: 0.95 }).addTo(leafletMap);
+            L.polyline(arc3, { color: '#06b6d4', weight: 3.0, opacity: 0.85, dashArray: '6, 8' }).addTo(leafletMap);
         }
 
         window.onload = function() {
-            drawWorldMap();
+            setTimeout(initLeafletCartoMap, 150);
         };
-        window.onresize = drawWorldMap;
+        window.onresize = function() {
+            if (leafletMap) leafletMap.invalidateSize();
+        };
     </script>
 </body>
 </html>
