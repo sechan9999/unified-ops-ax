@@ -85,8 +85,8 @@ st.markdown(
             <a href="https://console.cloud.google.com/run/detail/us-central1/unified-ops-ax/observability/metrics?project=agentichackathon-506620" target="_blank" style="background: #10b981; color: #ffffff; text-decoration: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; font-size: 0.85rem;">
                 🤖 Agent Console
             </a>
-            <a href="https://unified-ops.streamlit.app/" target="_blank" style="background: #2563eb; color: #ffffff; text-decoration: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; font-size: 0.85rem;">
-                🛰️ Streamlit Control Desk (.streamlit.app)
+            <a href="https://unified-ops-ax-652787573242.us-central1.run.app/docs" target="_blank" style="background: #2563eb; color: #ffffff; text-decoration: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; font-size: 0.85rem;">
+                ⚡ FastAPI Swagger UI (/docs)
             </a>
         </div>
     </div>
