@@ -1044,8 +1044,25 @@
             }, 300);
         }
 
+        function fetchLiveTelemetry() {
+            fetch('/health')
+                .then(res => res.json())
+                .then(data => {
+                    console.log('Live Health Telemetry:', data);
+                })
+                .catch(() => {});
+
+            fetch('/ops/preflight')
+                .then(res => res.json())
+                .then(data => {
+                    console.log('Live Preflight Telemetry:', data);
+                })
+                .catch(() => {});
+        }
+
         window.onload = function() {
             setTimeout(initLeafletCleanMap, 150);
+            fetchLiveTelemetry();
         };
         window.onresize = function() {
             if (leafletMap) leafletMap.invalidateSize();

@@ -7,7 +7,7 @@ from app.db import get_session
 from app.domain.models import Customer, Employee, Product
 from app.domain.schemas import ASTicketIn, CustomerIn, EmployeeIn, OrderIn, ProductIn, ResolveIn
 from app.domain.services import cancel_order, mark_delivered, open_as_ticket, place_order, resolve_as_ticket
-from app.security.auth import Identity, current_identity
+from app.security.auth import Identity, current_identity, require_bootstrap_or_manager
 from app.security.pii import get_cipher
 from app.security.rls import can_view_customer, scope_customers
 from app.views.customer360 import customer_360
@@ -89,7 +89,11 @@ def cancel_order_route(order_id: str, session: Session = Depends(get_session)):
 
 
 @router.post("/employees")
-def create_employee(body: EmployeeIn, session: Session = Depends(get_session)):
+def create_employee(
+    body: EmployeeIn,
+    session: Session = Depends(get_session),
+    _auth=Depends(require_bootstrap_or_manager),
+):
     employee = Employee(**body.model_dump())
     session.add(employee)
     session.commit()
@@ -97,7 +101,11 @@ def create_employee(body: EmployeeIn, session: Session = Depends(get_session)):
 
 
 @router.post("/employees/{employee_id}/token")
-def issue_employee_token(employee_id: str, session: Session = Depends(get_session)):
+def issue_employee_token(
+    employee_id: str,
+    session: Session = Depends(get_session),
+    _auth=Depends(require_bootstrap_or_manager),
+):
     from app.security.auth import issue_token
 
     employee = session.get(Employee, employee_id)

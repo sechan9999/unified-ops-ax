@@ -45,8 +45,6 @@ class IngestFolderIn(BaseModel):
 
 class RagQueryIn(BaseModel):
     query: str
-    role: str = "sales"
-    employee_id: str | None = None
     k: int = 5
 
 

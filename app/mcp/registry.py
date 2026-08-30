@@ -64,7 +64,7 @@ def _triage_ticket(session, args):
 
 _STR = {"type": "string"}
 TOOLS: list[Tool] = [
-    Tool("search_knowledge", "사내 문서·지식을 RAG로 검색(권한 트리밍). role로 접근범위 지정.",
+    Tool("search_knowledge", "사내 문서·지식을 RAG로 검색(서버 사이드 권한 트리밍 적용).",
          {"type": "object", "properties": {"query": _STR, "role": _STR, "k": {"type": "integer"}},
           "required": ["query"]}, _search_knowledge),
     Tool("get_customer_360", "고객의 전체 여정(리드·주문·공정·AS·팔로업 타임라인) 조회.",

@@ -10,6 +10,8 @@ from app.domain.schemas import IngestFolderIn, IngestIn, RagQueryIn
 from app.rag.ingest import ingest_document
 from app.rag.service import answer
 
+from app.security.auth import Identity, current_identity
+
 router = APIRouter(prefix="/rag", tags=["rag"])
 
 
@@ -27,14 +29,14 @@ def _ingest_source_docs(session: Session, connector) -> dict:
 
 
 @router.post("/ingest")
-def ingest(body: IngestIn, session: Session = Depends(get_session)):
+def ingest(body: IngestIn, session: Session = Depends(get_session), _auth=Depends(current_identity)):
     doc = ingest_document(session, title=body.title, content=body.content, acl=body.acl, source=body.source)
     session.commit()
     return {"document_id": doc.id, "chunks": len(doc.chunks), "acl": doc.acl}
 
 
 @router.post("/ingest/folder")
-def ingest_folder(body: IngestFolderIn, session: Session = Depends(get_session)):
+def ingest_folder(body: IngestFolderIn, session: Session = Depends(get_session), _auth=Depends(current_identity)):
     connector = LocalFolderConnector(body.path)
     ingested = []
     for src in connector.list_documents():
@@ -48,7 +50,7 @@ def ingest_folder(body: IngestFolderIn, session: Session = Depends(get_session))
 
 
 @router.post("/ingest/sharepoint")
-def ingest_sharepoint(session: Session = Depends(get_session)):
+def ingest_sharepoint(session: Session = Depends(get_session), _auth=Depends(current_identity)):
     from app.connectors.sharepoint import build_sharepoint_connector
 
     try:
@@ -59,7 +61,7 @@ def ingest_sharepoint(session: Session = Depends(get_session)):
 
 
 @router.post("/ingest/teams")
-def ingest_teams(session: Session = Depends(get_session)):
+def ingest_teams(session: Session = Depends(get_session), _auth=Depends(current_identity)):
     from app.connectors.sharepoint import build_teams_connector
 
     try:
@@ -70,5 +72,5 @@ def ingest_teams(session: Session = Depends(get_session)):
 
 
 @router.post("/query")
-def query(body: RagQueryIn):
-    return answer(body.query, role=body.role, employee_id=body.employee_id, k=body.k)
+def query(body: RagQueryIn, identity: Identity = Depends(current_identity)):
+    return answer(body.query, role=identity.role, employee_id=identity.employee_id, k=body.k)

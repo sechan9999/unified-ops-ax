@@ -50,14 +50,16 @@ def main() -> int:
               and by["vector"] == "ok" and by["pii"] == "configured",
               f"mode={pf['mode']}")
 
+        BOOT_H = {"X-Bootstrap-Key": "bootstrap-admin-key"}
+
         # 1. actors
-        mgr = c.post("/hub/employees", json={"name": "김대표", "role": "manager"}).json()["id"]
-        mtok = c.post(f"/hub/employees/{mgr}/token").json()["token"]
-        prod = c.post("/hub/employees", json={"name": "박기사", "role": "production"}).json()["id"]
-        s1 = c.post("/hub/employees", json={"name": "이영업", "role": "sales"}).json()["id"]
-        t1 = c.post(f"/hub/employees/{s1}/token").json()["token"]
-        s2 = c.post("/hub/employees", json={"name": "최영업", "role": "sales"}).json()["id"]
-        t2 = c.post(f"/hub/employees/{s2}/token").json()["token"]
+        mgr = c.post("/hub/employees", json={"name": "김대표", "role": "manager"}, headers=BOOT_H).json()["id"]
+        mtok = c.post(f"/hub/employees/{mgr}/token", headers=BOOT_H).json()["token"]
+        prod = c.post("/hub/employees", json={"name": "박기사", "role": "production"}, headers=BOOT_H).json()["id"]
+        s1 = c.post("/hub/employees", json={"name": "이영업", "role": "sales"}, headers=BOOT_H).json()["id"]
+        t1 = c.post(f"/hub/employees/{s1}/token", headers=BOOT_H).json()["token"]
+        s2 = c.post("/hub/employees", json={"name": "최영업", "role": "sales"}, headers=BOOT_H).json()["id"]
+        t2 = c.post(f"/hub/employees/{s2}/token", headers=BOOT_H).json()["token"]
         pid = c.post("/hub/products", json={"sku": "P1", "name": "밸브", "unit_price": 100, "stock_qty": 5}).json()["id"]
         cid = c.post("/hub/customers", json={"name": "대성정밀", "email": "ceo@daesung.co.kr", "owner_employee_id": s1}).json()["id"]
         check("액터/제품/고객 생성 + 토큰 발급", bool(mtok and t1 and pid and cid))
@@ -82,7 +84,7 @@ def main() -> int:
         # 5. resolve -> knowledge capture -> RAG retrievable
         c.post(f"/hub/as-tickets/{tid}/resolve", json={"resolution": "커넥터 교체"})
         c.post("/ops/dispatch")  # drain as.resolved -> knowledge agent
-        q = c.post("/rag/query", json={"query": "전원 부품 고장", "role": "as"}).json()
+        q = c.post("/rag/query", json={"query": "전원 부품 고장"}, headers=H(t1)).json()
         check("지식화→RAG 검색 루프", any("전원" in (cit.get("title") or "") for cit in q["citations"]))
 
         # 6. deliver -> followup draft -> HITL approve+send
@@ -99,9 +101,9 @@ def main() -> int:
         check("배송→팔로업 초안(자동)→HITL 발송", fu_drafted and appr["status"] == "sent" and appr["delivered"])
 
         # 7. RAG Security Trimming
-        c.post("/rag/ingest", json={"title": "Payroll", "content": "payroll tax ledger salary", "acl": ["grp:accounting"]})
-        c.post("/rag/ingest", json={"title": "Handbook", "content": "vacation policy onboarding", "acl": []})
-        sales_q = c.post("/rag/query", json={"query": "payroll tax ledger salary", "role": "sales"}).json()
+        c.post("/rag/ingest", json={"title": "Payroll", "content": "payroll tax ledger salary", "acl": ["grp:accounting"]}, headers=H(mtok))
+        c.post("/rag/ingest", json={"title": "Handbook", "content": "vacation policy onboarding", "acl": []}, headers=H(mtok))
+        sales_q = c.post("/rag/query", json={"query": "payroll tax ledger salary"}, headers=H(t1)).json()
         check("Security Trimming (영업이 회계문서 검색 불가)",
               all(cit["title"] != "Payroll" for cit in sales_q["citations"]))
 

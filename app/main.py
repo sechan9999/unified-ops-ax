@@ -33,7 +33,25 @@ async def lifespan(app: FastAPI):
         worker.stop()
 
 
-app = FastAPI(title=settings.app_name, version="0.1.0", lifespan=lifespan)
+openapi_tags = [
+    {"name": "hub", "description": "Single Source of Truth (SSOT). Manage customers, products, employees, orders, and A/S tickets."},
+    {"name": "rag", "description": "Enterprise Document Ingestion & RAG Vector Search (Server-side ACL Security Trimming)."},
+    {"name": "ai-gateway", "description": "Provider-agnostic LLM Gateway Abstraction Layer."},
+    {"name": "ops", "description": "SaaS Orchestration, Transactional Outbox Worker, and Health Probes."},
+    {"name": "agents", "description": "Governed Multi-Agent Subsystem (Triage, Knowledge, Follow-up, Reconcile, Evolve)."},
+    {"name": "views", "description": "Read-only operational rollups computed from SSOT hub events."},
+    {"name": "workspace", "description": "Role-Based Workspace Layout and Experience Layer."},
+    {"name": "governance", "description": "Manager-Only Audit Logs, Adoption KPIs, and Data Ownership Policies."},
+    {"name": "mcp", "description": "Model Context Protocol (MCP) JSON-RPC Tool Registry."},
+]
+
+app = FastAPI(
+    title=settings.app_name,
+    version="0.1.0",
+    description="Unified Ops AX — Autonomous Fleet Telemetry & Governed Multi-Agent Monolith",
+    openapi_tags=openapi_tags,
+    lifespan=lifespan,
+)
 
 
 import os

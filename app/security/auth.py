@@ -7,12 +7,17 @@ import secrets
 from dataclasses import dataclass
 
 from fastapi import Depends, Header, HTTPException
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.config import get_settings
 from app.db import get_session
 from app.domain.models import Employee
 from app.security.rbac import principals_for
+
+# OpenAPI Bearer Token Security Scheme for /docs Authorize Button
+security_scheme = HTTPBearer(auto_error=False)
 
 
 @dataclass
@@ -38,15 +43,39 @@ def resolve_identity(session: Session, token: str) -> Identity:
 
 
 def current_identity(
+    credentials: HTTPAuthorizationCredentials | None = Depends(security_scheme),
     authorization: str | None = Header(default=None),
     session: Session = Depends(get_session),
 ) -> Identity:
-    if not authorization or not authorization.startswith("Bearer "):
+    token = None
+    if credentials and credentials.credentials:
+        token = credentials.credentials
+    elif authorization and authorization.startswith("Bearer "):
+        token = authorization.split(" ", 1)[1]
+
+    if not token:
         raise HTTPException(401, "missing bearer token")
-    return resolve_identity(session, authorization.split(" ", 1)[1])
+    return resolve_identity(session, token)
 
 
 def require_manager(identity: Identity = Depends(current_identity)) -> Identity:
     if identity.role != "manager":
         raise HTTPException(403, "manager role required")
+    return identity
+
+
+def require_bootstrap_or_manager(
+    x_bootstrap_key: str | None = Header(default=None, alias="X-Bootstrap-Key"),
+    authorization: str | None = Header(default=None),
+    credentials: HTTPAuthorizationCredentials | None = Depends(security_scheme),
+    session: Session = Depends(get_session),
+) -> Identity | dict:
+    settings = get_settings()
+    if x_bootstrap_key and x_bootstrap_key == settings.admin_bootstrap_key:
+        return {"bootstrap": True, "role": "manager"}
+
+    # Fallback to manager identity check
+    identity = current_identity(credentials=credentials, authorization=authorization, session=session)
+    if identity.role != "manager":
+        raise HTTPException(403, "manager authorization or bootstrap key required")
     return identity

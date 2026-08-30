@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     # Database
     database_url: str = "sqlite+pysqlite:///./unified_ops.db"
 
+    # Security & Admin Bootstrap
+    admin_bootstrap_key: str = "bootstrap-admin-key"
+
     # AI Gateway
     default_llm_provider: str = "fake"  # fake | anthropic | openai | onprem | vertex
     anthropic_api_key: Optional[str] = None
