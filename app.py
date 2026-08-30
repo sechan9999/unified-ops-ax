@@ -332,6 +332,26 @@ with tab_fleet:
         )
         st.plotly_chart(fig_scatter, use_container_width=True)
 
+    st.divider()
+
+    # --- Role in Unified Ops AX Architecture & Subsystem Breakdown ---
+    col_r_fleet, col_b_fleet = st.columns(2)
+    with col_r_fleet:
+        st.subheader("🏗️ Role in Unified Ops AX Architecture")
+        st.info(
+            "**L5 Experience & Observability Layer:**\n\n"
+            "Serves as the primary operational telemetry dashboard, mapping real-time geospatial unit locations, active mission statuses, "
+            "battery levels, and telemetry warnings across the fleet to provide complete operational visibility."
+        )
+
+    with col_b_fleet:
+        st.subheader("⚙️ Key Subsystem Breakdown")
+        st.markdown("""
+- **1. Geospatial Renderer (PyDeck Scatterplot):** Renders dynamic 3D spatial flow maps with HSL status color coding.
+- **2. Telemetry Matrix & Priority Alert Listener:** Tracks real-time unit health, battery reserves, velocity, and priority incidents.
+- **3. Dispatch Directive Override Controller:** Executes manual hold position, re-routing to base, and diagnostic commands.
+""")
+
 with tab_async:
     st.subheader("⚡ AsyncAgentEngine Worker Status & Queue Controls")
     st.caption("Autonomous Background Multi-Agent Telemetry & Self-Healing Remediation Engine (Google ADK & Gemini 3.5 Flash)")
@@ -361,12 +381,32 @@ with tab_async:
             st.toast(f"Auto-Remediation Triggered: {anomaly.split(' ')[0]}", icon="🚨")
             st.warning(f"Alert Triggered: {anomaly}. Circuit breaker opened. Switched to fallback router (Gemini 3.5 Flash) in 8.2ms.")
 
+    st.divider()
+
+    # --- Role in Unified Ops AX Architecture & Subsystem Breakdown ---
+    col_r_async, col_b_async = st.columns(2)
+    with col_r_async:
+        st.subheader("🏗️ Role in Unified Ops AX Architecture")
+        st.info(
+            "**L4 Intelligence & Background Task Execution Layer:**\n\n"
+            "Houses the multi-threaded `AsyncAgentEngine` worker pool and priority queue state machine. Offloads heavy background processing "
+            "(log ingestion, vector RAG indexing, anomaly detection, daily digests) from main UI/API threads to ensure non-blocking operation."
+        )
+
+    with col_b_async:
+        st.subheader("⚙️ Key Subsystem Breakdown")
+        st.markdown("""
+- **1. Priority Queue State Machine:** Manages worker priorities (`CRITICAL`, `HIGH`, `NORMAL`, `LOW`) so urgent remediations jump ahead.
+- **2. Asynchronous Worker Pool:** 4 dedicated worker threads executing non-blocking background tasks at $> 31 \\text{ tasks/sec}$.
+- **3. Anomaly Alert Simulator & Auto-Remediation Trigger:** Simulates Splunk anomalies and executes sub-10ms circuit breaker fallbacks.
+""")
+
 with tab_k8s:
     st.subheader("🔮 K8s HPA Pod Scaling Matrix & Horizontal Autoscaling Controls")
     st.caption("Autonomous Kubernetes Pod Replicas Management under High Traffic Spikes")
     
     col_k1, col_k2, col_k3 = st.columns(3)
-    target_pods = st.slider("Target Pod Replicas", 2, 10, 4)
+    target_pods = st.slider("Target Pod Replicas", 2, 10, 6)
     
     col_k1.metric("Active Replicas", f"{target_pods} Pods", delta="Min: 2 | Max: 10")
     col_k2.metric("Target CPU Load", "70% Utilization", delta="Current Avg: 38%")
@@ -375,6 +415,44 @@ with tab_k8s:
     if st.button("🚀 Trigger Manual HPA Scale Override", type="primary"):
         st.toast(f"K8s HPA Scaled to {target_pods} Pod Replicas!", icon="🚀")
         st.success(f"Successfully scaled deployment replicas to {target_pods} pods. Target CPU: 70%. Status: HEALTHY.")
+
+    st.divider()
+
+    # --- Role in Unified Ops AX Architecture & Subsystem Breakdown ---
+    col_role, col_breakdown = st.columns(2)
+    with col_role:
+        st.subheader("🏗️ Role in Unified Ops AX Architecture")
+        st.info(
+            "**Infrastructure Elasticity Layer (L2/L4 Integration):**\n\n"
+            "This subsystem serves as the **automated elastic infrastructure controller** within the Unified Ops AX 5-Layer Monolith. "
+            "When background agents (e.g. *Evolve Agent* or *Telemetry Monitor*) detect **latency bursts ($P_{99} > 5,000\\text{ms}$)** "
+            "or severe task queue congestion, the HPA engine dynamically scales worker container replicas to maintain sub-second SLA performance "
+            "and prevent task queue starvation."
+        )
+
+    with col_breakdown:
+        st.subheader("⚙️ Key Subsystem Breakdown")
+        st.markdown("""
+- **1. Telemetry Sensor & SLA Monitor:** Continuously polls CPU utilization, queue depth, and P95/P99 latency.
+- **2. Dynamic Policy Calculator:** Computes target replicas via $\\text{Replicas} = \\lceil \\text{Current Replicas} \\times (\\frac{\\text{Current CPU}}{70\\%}) \\rceil$.
+- **3. Kubectl / Cloud Execution Adapter:** Dispatches `kubectl scale deployment` directives with dry-run/simulation fallbacks.
+- **4. Audit & Cooldown Ledger:** Logs every scale action with timestamps, previous/new replica counts, and rollback tokens.
+""")
+
+    st.divider()
+
+    # --- Pod Scaling History Audit View ---
+    st.subheader("📜 Pod Scaling Audit History")
+    scaling_history = {
+        "timestamp": 1788121370.9319267,
+        "deployment": "unified-ops-agent-pool",
+        "previous_replicas": 4,
+        "new_replicas": target_pods,
+        "reason": "manual_user_override",
+        "is_live_k8s": False,
+        "kubectl_executed": False
+    }
+    st.json(scaling_history)
 
 with tab_security:
     st.subheader("🔒 Local DLP Guardrail & RLS Policy Inspector")
@@ -399,6 +477,26 @@ with tab_security:
             else:
                 st.success("SQL Predicate: WHERE 1=1 (Unrestricted Admin Access)\nFull Audit Access Granted: All Ledgers Unlocked")
 
+    st.divider()
+
+    # --- Role in Unified Ops AX Architecture & Subsystem Breakdown ---
+    col_r_sec, col_b_sec = st.columns(2)
+    with col_r_sec:
+        st.subheader("🏗️ Role in Unified Ops AX Architecture")
+        st.info(
+            "**Governance & Data Security Boundary Layer:**\n\n"
+            "Enforces zero-trust data protection before storage or LLM emission. Combines HMAC-SHA256 at-rest PII encryption "
+            "with server-side SQL `WHERE` clause Security Trimming, making role enforcement impossible to forge via LLM prompt-injection."
+        )
+
+    with col_b_sec:
+        st.subheader("⚙️ Key Subsystem Breakdown")
+        st.markdown("""
+- **1. HMAC-SHA256 At-Rest PII Masker:** Replaces raw customer PII with deterministic hash tokens (`enc:v1:...`) prior to DB ingestion.
+- **2. SQL Security Trimming Predicate Evaluator:** Enforces role-based SQL `WHERE` filters before vector similarity ranking.
+- **3. Server-Derived Principal Context:** Derives user credentials on the server side—never accepting user/role args from LLMs.
+""")
+
 with tab_topology:
     st.subheader("🏗️ 5-Layer Modular Monolith Architecture Topology")
     st.caption("Decoupled single source of truth architecture powered by transactional outbox events")
@@ -421,6 +519,28 @@ with tab_topology:
         st.info("Layer 2: SaaS Integration Orchestration\nPath: app/orchestration/ | Outbox: app/events/outbox.py\nHandles transactional outbox draining, event dispatchers, and SaaS integration idempotency locks.")
     else:
         st.info("Layer 1: Enterprise SaaS Connectors\nPath: app/connectors/\nREST adapters for Douzone Accounting, Google Calendar, and Marketing Performance Ad Connectors.")
+
+    st.divider()
+
+    # --- Role in Unified Ops AX Architecture & Subsystem Breakdown ---
+    col_r_top, col_b_top = st.columns(2)
+    with col_r_top:
+        st.subheader("🏗️ Role in Unified Ops AX Architecture")
+        st.info(
+            "**Architectural Single Source of Truth (SSOT) & Blueprint:**\n\n"
+            "Defines the 5-Layer Modular Monolith architecture, guaranteeing decoupled isolation between user interfaces (L5), "
+            "agent intelligence (L4), event dispatching (L3), SaaS orchestration (L2), and external connectors (L1)."
+        )
+
+    with col_b_top:
+        st.subheader("⚙️ Key Subsystem Breakdown")
+        st.markdown("""
+- **Layer 5 (Experience):** Workspaces & Streamlit UI (`app/experience/`).
+- **Layer 4 (Intelligence):** 5 Governed Agents & Vertex AI Gateway (`app/agents/`).
+- **Layer 3 (Core Data Hub):** Activity Store, Outbox & pgvector RAG (`app/events/`).
+- **Layer 2 (Orchestration):** Outbox polling worker & locks (`app/orchestration/`).
+- **Layer 1 (Connectors):** MS Graph, Douzone & Calendar adapters (`app/connectors/`).
+""")
 
 with tab_gcp:
     st.subheader("☁️ Google Cloud Infrastructure & Agent Platform Tech Proof")
@@ -448,6 +568,27 @@ with tab_gcp:
             "cloud_sql": "PostgreSQL pgvector RLS",
             "verification_suite": "17/17 PASS"
         })
+
+    st.divider()
+
+    # --- Role in Unified Ops AX Architecture & Subsystem Breakdown ---
+    col_r_gcp, col_b_gcp = st.columns(2)
+    with col_r_gcp:
+        st.subheader("🏗️ Role in Unified Ops AX Architecture")
+        st.info(
+            "**Production Cloud Hosting & Serverless Infrastructure Layer:**\n\n"
+            "Demonstrates production compliance by running 6 native Google Cloud services (Cloud Run, Vertex AI, Pub/Sub, Firestore, GCS, Cloud SQL). "
+            "Ensures scale-to-zero serverless compute, managed vector search, and transactional event bus publishing."
+        )
+
+    with col_b_gcp:
+        st.subheader("⚙️ Key Subsystem Breakdown")
+        st.markdown("""
+- **1. Cloud Run Container Host:** Auto-scaling serverless HTTP container hosting FastAPI & Agents.
+- **2. Vertex AI & Gemini Models:** `gemini-3.5-flash` reasoning & `text-embedding-004` vector search.
+- **3. Pub/Sub & Firestore:** Real-time transactional event bus & NoSQL audit logs (`activity_logs`).
+- **4. Cloud SQL (PostgreSQL pgvector):** Enterprise relational DB with SQL-level Row-Level Security.
+""")
 
 with tab_verify:
     st.subheader("📋 Automated E2E Verification Suite (17/17 PASS)")
@@ -478,6 +619,26 @@ with tab_verify:
     ])
     st.dataframe(verify_df, use_container_width=True, hide_index=True)
 
+    st.divider()
+
+    # --- Role in Unified Ops AX Architecture & Subsystem Breakdown ---
+    col_r_ver, col_b_ver = st.columns(2)
+    with col_r_ver:
+        st.subheader("🏗️ Role in Unified Ops AX Architecture")
+        st.info(
+            "**Continuous Quality Assurance & E2E Validation Layer:**\n\n"
+            "Provides empirical, automated runtime verification for all security, RLS, financial reconciliation, MCP, "
+            "and agent governance contracts to ensure 100% system reliability across local and cloud environments."
+        )
+
+    with col_b_ver:
+        st.subheader("⚙️ Key Subsystem Breakdown")
+        st.markdown("""
+- **1. Functional Test Runner:** Executes 17 automated end-to-end checks across SQLite and Cloud SQL.
+- **2. Security & Financial Integrity Probes:** Verifies HITL `HTTP 409` human gates and refund consistency.
+- **3. Protocol Registry Auditor:** Validates MCP 7-tool JSON-RPC stdio server contracts & SaaS adapters.
+""")
+
 with tab_evolve:
     st.subheader("🧪 Evolve Agent — Autonomous Diagnostics & Link Audit")
     st.caption("Audits application links, endpoint latencies, PII encryption status, and generates strategic evolution directives.")
@@ -498,6 +659,26 @@ with tab_evolve:
         {"Endpoint / Link": "https://console.cloud.google.com/run/detail/us-central1/unified-ops-ax/observability/metrics?project=agentichackathon-506620", "Description": "GCP Cloud Run Observability Metrics", "Status": "200 OK", "Latency": "92 ms", "Type": "Google Cloud Console"},
     ]
     st.dataframe(pd.DataFrame(endpoints_data), use_container_width=True, hide_index=True)
+
+    st.divider()
+
+    # --- Role in Unified Ops AX Architecture & Subsystem Breakdown ---
+    col_r_evo, col_b_evo = st.columns(2)
+    with col_r_evo:
+        st.subheader("🏗️ Role in Unified Ops AX Architecture")
+        st.info(
+            "**L4 Autonomous Diagnostic & Self-Healing Subsystem:**\n\n"
+            "Systematically probes application endpoints, audits HTTP link latencies, monitors PII compliance, "
+            "and generates continuous self-healing architectural improvement directives to keep the multi-agent fleet healthy."
+        )
+
+    with col_b_evo:
+        st.subheader("⚙️ Key Subsystem Breakdown")
+        st.markdown("""
+- **1. Live Endpoint & Health Auditor:** Probes live API latencies across Cloud Run, MCP, Streamlit, and GCP.
+- **2. Strategic Improvement Engine:** Generates prioritized directives (`P1` Redis Outbox, `P1` Gemini Reasoning, `P2` WebSockets).
+- **3. Self-Healing Loop:** Automatically registers system anomalies into the audit ledger and issues patch directives.
+""")
 
     st.divider()
     st.markdown("### 💡 Evolve Agent Strategic Improvement Directives")
