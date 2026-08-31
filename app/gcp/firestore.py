@@ -44,3 +44,16 @@ class GoogleCloudFirestoreStore:
             except Exception:
                 pass
         return self._local_store.get(doc_id)
+
+    def list_recent_documents(self, limit: int = 20) -> list[dict[str, Any]]:
+        """Fetch recent telemetry audit logs from Firestore or local fallback."""
+        if os.getenv("GOOGLE_APPLICATION_CREDENTIALS") or os.getenv("GCP_PROJECT"):
+            try:
+                from google.cloud import firestore
+
+                db = firestore.Client(project=self.project_id)
+                docs = db.collection(self.collection_name).limit(limit).stream()
+                return [d.to_dict() for d in docs]
+            except Exception:
+                pass
+        return list(self._local_store.values())[-limit:]
